@@ -1,0 +1,30 @@
+# beam_transmit.mac
+/control/verbose 2
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+# Visualización 
+/vis/open OGL
+/vis/scene/create
+/vis/scene/add/volume
+/vis/drawVolume
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
+/vis/scene/add/hits
+/vis/enable
+
+# Inicialización del run
+/run/initialize
+
+# Configuración del haz
+/gun/particle neutron
+/gun/energy 4200000 eV
+/gun/position 0 0 -6.5 cm
+/gun/direction 0 0 1
+/gun/number 1
+
+# Simulación
+/run/beamOn 5
+
+
