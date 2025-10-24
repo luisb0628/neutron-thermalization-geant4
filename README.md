@@ -60,10 +60,7 @@ El proyecto incluye macros de ejemplo en la carpeta `macros/`:
 # Ejecutar en modo visual 
 ./neutron-thermalization macros/vis.mac
 
-# Ejecutar y redirigir la salida
-./neutron-thermalization macros/run.mac 
 ```
-
 
 ---
 
@@ -78,14 +75,6 @@ Los resultados pueden representarse en histogramas de:
 - Energía inicial vs energía final.
 - Número de colisiones por neutrón.
 - Fracción de termalizados en función del espesor del bloque.
-
----
-
-## Formato de salida sugerido
-
-- **ROOT:** árbol (`TTree`) con columnas: `eventID, E_initial, E_final, n_collisions, x_final, y_final, z_final`.
-- **CSV:** formato simple con columnas como:  
-  `event, E_final_eV, n_collisions, z_final_cm`.
 
 ---
 
