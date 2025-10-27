@@ -11,17 +11,19 @@ EventAction::EventAction(RunAction* runAction)
 
 EventAction::~EventAction() {}
 
-void EventAction::BeginOfEventAction(const G4Event*) {}
-
-void EventAction::EndOfEventAction(const G4Event*) {}
-
-void EventAction::RecordNeutronEnergy(G4double energy)
+void EventAction::BeginOfEventAction(const G4Event*) 
 {
-    auto analysisManager = G4AnalysisManager::Instance();
-
-    // Convertir energía a eV
-    G4double energy_eV = energy / eV;
-
-    // Llenar histograma
-    analysisManager->FillH1(0, energy_eV);
+    // Este método se llama al inicio de cada evento
+    // Puedes usarlo para inicializar variables por evento si lo necesitas
 }
+
+void EventAction::EndOfEventAction(const G4Event*) 
+{
+    // Este método se llama al final de cada evento
+    // Puedes usarlo para procesar "Hits Collections" si las usaras,
+    // pero para el llenado directo, lo dejamos vacío.
+}
+
+// La función RecordNeutronEnergy() se ha eliminado
+// porque TransmittedSD.cc ahora maneja el llenado
+// del histograma Y la ntuple.
