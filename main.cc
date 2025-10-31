@@ -3,6 +3,7 @@
 #include "QGSP_BERT_HP.hh"
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
+#include "G4Timer.hh"
 
 #include "ActionInitialization.hh"
 #include "DetectorConstruction.hh"
@@ -31,6 +32,11 @@ int main(int argc, char** argv) {
     // Obtener el gestor de comandos
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
+    // Iniciar cronometro
+    G4Timer* timer = new G4Timer();
+    timer->Start();
+
+
     if (!ui) {
         // Modo batch (ejecutar macro desde línea de comandos)
         G4String command = "/control/execute ";
@@ -42,6 +48,19 @@ int main(int argc, char** argv) {
         ui->SessionStart();
         delete ui;
     }
+
+    //Detener cronometro
+    timer->Stop();
+
+       G4cout << "\n" << "************************************************************" << G4endl;
+    G4cout << "  Simulación completada." << G4endl;
+    G4cout << "  Tiempo Real (Wall Clock): " << timer->GetRealElapsed()  << " segundos." << G4endl;
+    G4cout << "  Tiempo de CPU (User):     " << timer->GetUserElapsed()  << " segundos." << G4endl;
+    G4cout << "************************************************************" << G4endl;
+
+    delete timer;
+    // ----------------------------------------------------
+
 
     // Limpieza
     delete visManager;

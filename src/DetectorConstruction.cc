@@ -40,7 +40,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     new G4PVPlacement(0, G4ThreeVector(0,0,0), logicBlock, "Block", logicWorld, false, 0);
 
     // --- Detector plano ---
-    G4double detHalfX = 2*cm, detHalfY = 2*cm;
+    G4double detHalfX = 1*cm, detHalfY = 1*cm;
     G4double detHalfZ = 0.5*mm;
     auto solidDet = new G4Box("Detector", detHalfX, detHalfY, detHalfZ);
     auto detMat = nist->FindOrBuildMaterial("G4_AIR");

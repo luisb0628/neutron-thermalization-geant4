@@ -49,6 +49,10 @@ void RunAction::BeginOfRunAction(const G4Run*)
   analysisManager->CreateNtupleSColumn("FinalVolume"); // Col 10: Nombre del volumen donde terminó
   analysisManager->CreateNtupleSColumn("FinalProcess"); // Col 11: Proceso que finalizó la traza
 
+  analysisManager->CreateNtupleDColumn("DirX");            // Col 12: Componente X de la dirección
+  analysisManager->CreateNtupleDColumn("DirY");            // Col 13: Componente Y de la dirección
+  analysisManager->CreateNtupleDColumn("DirZ");            // Col 14: Componente Z de la dirección
+
   analysisManager->FinishNtuple();
 }
 

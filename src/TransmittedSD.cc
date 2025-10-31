@@ -72,10 +72,19 @@ G4bool TransmittedSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
             if (process) processName = process->GetProcessName();
             analysisManager->FillNtupleSColumn(ntupleID, 11, processName);
 
-            // ¡Importante! Añadir la fila a la Ntuple
-            analysisManager->AddNtupleRow(ntupleID);
+            // Col 12, 13, 14: Dirección 
+            G4ThreeVector direction = pre->GetMomentumDirection();
+            analysisManager->FillNtupleDColumn(ntupleID, 12, direction.x());
+            analysisManager->FillNtupleDColumn(ntupleID, 13, direction.y());
+            analysisManager->FillNtupleDColumn(ntupleID, 14, direction.z());
 
-            // Opcional: Matar la traza si ya no nos interesa
+            // Añadir la fila a la Ntuple
+            analysisManager->AddNtupleRow(ntupleID);
+            
+
+
+
+            
             // track->SetTrackStatus(fStopAndKill);
 
             return true;
