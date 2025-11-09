@@ -11,7 +11,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
     G4VPhysicalVolume* Construct() override;
     void ConstructSDandField() override;
   private:
-    G4double fParaffinThickness; 
+    
 };
 
 #endif

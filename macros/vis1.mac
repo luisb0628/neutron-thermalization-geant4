@@ -4,22 +4,25 @@
 /event/verbose 0
 /tracking/verbose 0
 
-# Visualización 
+/run/initialize
+
+# Visualización
 /vis/open OGL
+/vis/viewer/set/viewpointThetaPhi 90 0
+/vis/viewer/set/style surface
+/vis/viewer/set/autoRefresh true
 /vis/scene/create
 /vis/scene/add/volume
 /vis/drawVolume
 /vis/scene/add/trajectories smooth
-/vis/scene/endOfEventAction accumulate
 /vis/scene/add/hits
+/vis/scene/endOfEventAction accumulate
 /vis/enable
-
-# Inicialización del run
-/run/initialize
+/vis/viewer/refresh
 
 # Configuración del haz
 /gun/particle neutron
-/gun/energy 4200000 eV
+/gun/energy 4.2 MeV
 /gun/position 0 0 -6.5 cm
 /gun/direction 0 0 1
 /gun/number 1

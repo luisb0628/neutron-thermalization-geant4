@@ -10,7 +10,7 @@ import sys
 
 # ¡IMPORTANTE! Este número debe coincidir con el /run/beamOn de tu .mac
 # Para tu "corrida de prueba", 100,000 es un buen número.
-NEUTONES_SIMULADOS_TOTAL = 10000000
+NEUTONES_SIMULADOS_TOTAL = 10000
 
 # Archivo ROOT de entrada
 ARCHIVO_ROOT = "NeutronData.root"

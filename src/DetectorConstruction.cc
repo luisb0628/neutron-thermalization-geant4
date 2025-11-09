@@ -28,14 +28,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
     // --- Bloque de parafina (moderador) ---
     //Definir los parámetros de control
-    fParaffinThickness = 12.0 * cm;
-    G4double halfParaffinZ = fParaffinThickness / 2.0;
+    G4double paraffinX = 5*cm;
+    G4double paraffinY = 5*cm;
+    G4double paraffinZ = 5*cm;
     
     auto paraffin = new G4Material("Paraffin", 0.93*g/cm3, 2);
     paraffin->AddElement(nist->FindOrBuildElement("C"), 1);
     paraffin->AddElement(nist->FindOrBuildElement("H"), 2);
 
-    auto solidBlock = new G4Box("Block", 3*cm, 3*cm, halfParaffinZ);
+    auto solidBlock = new G4Box("Block", paraffinX, paraffinY, paraffinZ);
     auto logicBlock = new G4LogicalVolume(solidBlock, paraffin, "Block");
     new G4PVPlacement(0, G4ThreeVector(0,0,0), logicBlock, "Block", logicWorld, false, 0);
 
@@ -45,7 +46,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     auto solidDet = new G4Box("Detector", detHalfX, detHalfY, detHalfZ);
     auto detMat = nist->FindOrBuildMaterial("G4_AIR");
     auto logicDet = new G4LogicalVolume(solidDet, detMat, "Detector");
-    G4double zPos = halfParaffinZ + 0.1*cm + detHalfZ;
+    G4double zPos = paraffinZ + 0.1*cm + detHalfZ;
     new G4PVPlacement(0, G4ThreeVector(0,0,zPos), logicDet, "Detector", logicWorld, false, 0);
 
     // --- Límites de paso para mayor resolución ---
