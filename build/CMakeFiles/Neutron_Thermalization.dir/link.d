@@ -9,6 +9,7 @@ Neutron_Thermalization: \
   CMakeFiles/Neutron_Thermalization.dir/src/RunAction.cc.o \
   CMakeFiles/Neutron_Thermalization.dir/src/TransmittedSD.cc.o \
   CMakeFiles/Neutron_Thermalization.dir/src/EventAction.cc.o \
+  CMakeFiles/Neutron_Thermalization.dir/src/DetectorMessenger.cc.o \
   /home/luisb28/software/geant4/install/lib/libG4Tree.so \
   /home/luisb28/software/geant4/install/lib/libG4FR.so \
   /home/luisb28/software/geant4/install/lib/libG4GMocren.so \
@@ -150,6 +151,8 @@ CMakeFiles/Neutron_Thermalization.dir/src/RunAction.cc.o:
 CMakeFiles/Neutron_Thermalization.dir/src/TransmittedSD.cc.o:
 
 CMakeFiles/Neutron_Thermalization.dir/src/EventAction.cc.o:
+
+CMakeFiles/Neutron_Thermalization.dir/src/DetectorMessenger.cc.o:
 
 /home/luisb28/software/geant4/install/lib/libG4Tree.so:
 

@@ -283,6 +283,57 @@ CMakeFiles/Neutron_Thermalization.dir/src/DetectorConstruction.cc.o: \
  /usr/include/c++/14/bits/vector.tcc \
  /home/luisb28/software/geant4/install/include/Geant4/G4VPhysicalVolume.icc \
  /home/luisb28/software/geant4/install/include/Geant4/G4VUserDetectorConstruction.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/globals.hh \
+ /home/luisb28/software/geant4/examples/Project/Neutron_Thermalization/include/DetectorMessenger.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4UImessenger.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4UIdirectory.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4UIcommand.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4ApplicationState.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4UIparameter.hh \
+ /home/luisb28/software/geant4/examples/Project/Neutron_Thermalization/include/TransmittedSD.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VSensitiveDetector.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4CollectionNameVector.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4HCofThisEvent.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Allocator.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4AllocatorPool.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VHitsCollection.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Step.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VPhysicalVolume.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4StepPoint.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4SteppingControl.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4StepStatus.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4TouchableHandle.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VTouchable.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4TouchableHistory.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationHistory.hh \
+ /usr/include/assert.h \
+ /home/luisb28/software/geant4/install/include/Geant4/G4AffineTransform.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Transform3D.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Transform3D.h \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Transform3D.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Point3D.h \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/BasicVector3D.h \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Vector3D.h \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Normal3D.h \
+ /home/luisb28/software/geant4/install/include/Geant4/G4AffineTransform.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevel.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevelRep.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevelRep.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevel.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationHistoryPool.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NavigationHistory.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolume.hh \
+ /usr/include/c++/14/memory \
+ /usr/include/c++/14/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/14/bits/align.h \
+ /usr/include/c++/14/bits/shared_ptr_atomic.h \
+ /usr/include/c++/14/backward/auto_ptr.h \
+ /usr/include/c++/14/pstl/glue_memory_defs.h \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Region.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Region.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolume.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4TouchableHistory.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4ReferenceCountedHandle.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Material.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Element.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4ElementTable.hh \
@@ -309,77 +360,6 @@ CMakeFiles/Neutron_Thermalization.dir/src/DetectorConstruction.cc.o: \
  /home/luisb28/software/geant4/install/include/Geant4/G4OrderedTable.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4DataVector.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4DataVector.icc \
- /usr/include/assert.h \
- /home/luisb28/software/geant4/install/include/Geant4/G4NistManager.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4ICRU90StoppingData.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Material.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4NistElementBuilder.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4NistMaterialBuilder.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Pow.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Exp.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Box.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4GeomTypes.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4GeomConfig.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4CSGSolid.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VSolid.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VSolid.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4Polyhedron.hh \
- /home/luisb28/software/geant4/install/include/Geant4/HepPolyhedron.h \
- /home/luisb28/software/geant4/install/include/Geant4/G4TwoVector.hh \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Vector/TwoVector.h \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Vector/TwoVector.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4Point3D.hh \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Point3D.h \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/BasicVector3D.h \
- /home/luisb28/software/geant4/install/include/Geant4/G4Normal3D.hh \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Normal3D.h \
- /home/luisb28/software/geant4/install/include/Geant4/G4Transform3D.hh \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Transform3D.h \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Transform3D.icc \
- /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Geometry/Vector3D.h \
- /home/luisb28/software/geant4/install/include/Geant4/G4Visible.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Visible.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4Box.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolume.hh \
- /usr/include/c++/14/memory \
- /usr/include/c++/14/bits/stl_raw_storage_iter.h \
- /usr/include/c++/14/bits/align.h \
- /usr/include/c++/14/bits/shared_ptr_atomic.h \
- /usr/include/c++/14/backward/auto_ptr.h \
- /usr/include/c++/14/pstl/glue_memory_defs.h \
- /home/luisb28/software/geant4/install/include/Geant4/G4Region.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Region.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4VPhysicalVolume.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolume.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4PVPlacement.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4SDManager.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4HCtable.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4SDStructure.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VSensitiveDetector.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4CollectionNameVector.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4HCofThisEvent.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Allocator.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4AllocatorPool.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VHitsCollection.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4Step.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4StepPoint.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4SteppingControl.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4StepStatus.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4TouchableHandle.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VTouchable.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4TouchableHistory.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationHistory.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4AffineTransform.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4AffineTransform.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevel.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevelRep.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevelRep.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationLevel.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationHistoryPool.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4NavigationHistory.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolume.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4TouchableHistory.icc \
- /home/luisb28/software/geant4/install/include/Geant4/G4ReferenceCountedHandle.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4StepPoint.icc \
  /home/luisb28/software/geant4/install/include/Geant4/G4TrackVector.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Step.icc \
@@ -403,20 +383,48 @@ CMakeFiles/Neutron_Thermalization.dir/src/DetectorConstruction.cc.o: \
  /home/luisb28/software/geant4/install/include/Geant4/G4VReadOutGeometry.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4SensitiveVolumeList.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4VSDFilter.hh \
- /home/luisb28/software/geant4/examples/Project/Neutron_Thermalization/include/TransmittedSD.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VSensitiveDetector.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Step.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4THitsCollection.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4SystemOfUnits.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Material.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NistManager.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4ICRU90StoppingData.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NistElementBuilder.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4NistMaterialBuilder.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Pow.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Exp.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Box.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4GeomTypes.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4GeomConfig.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4CSGSolid.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VSolid.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VSolid.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Polyhedron.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/HepPolyhedron.h \
+ /home/luisb28/software/geant4/install/include/Geant4/G4TwoVector.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Vector/TwoVector.h \
+ /home/luisb28/software/geant4/install/include/Geant4/CLHEP/Vector/TwoVector.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Point3D.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Normal3D.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Visible.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Visible.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4Box.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolume.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4PVPlacement.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4SDManager.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4HCtable.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4SDStructure.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4VSensitiveDetector.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4LogicalVolumeStore.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4VStoreNotifier.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4VNotifier.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4UserLimits.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4UserLimits.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4RegionStore.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4ProductionCuts.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Region.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4UserLimits.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/G4UserLimits.icc \
  /home/luisb28/software/geant4/install/include/Geant4/G4VisAttributes.hh \
  /home/luisb28/software/geant4/install/include/Geant4/graphics_reps_defs.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Colour.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4Color.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VisAttributes.icc
+ /home/luisb28/software/geant4/install/include/Geant4/G4VisAttributes.icc \
+ /home/luisb28/software/geant4/install/include/Geant4/G4SystemOfUnits.hh

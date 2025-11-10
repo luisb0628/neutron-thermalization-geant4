@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Neutron_Thermalization.dir/src/ActionInitialization.cc.o.d"
   "CMakeFiles/Neutron_Thermalization.dir/src/DetectorConstruction.cc.o"
   "CMakeFiles/Neutron_Thermalization.dir/src/DetectorConstruction.cc.o.d"
+  "CMakeFiles/Neutron_Thermalization.dir/src/DetectorMessenger.cc.o"
+  "CMakeFiles/Neutron_Thermalization.dir/src/DetectorMessenger.cc.o.d"
   "CMakeFiles/Neutron_Thermalization.dir/src/EventAction.cc.o"
   "CMakeFiles/Neutron_Thermalization.dir/src/EventAction.cc.o.d"
   "CMakeFiles/Neutron_Thermalization.dir/src/PrimaryGeneratorAction.cc.o"

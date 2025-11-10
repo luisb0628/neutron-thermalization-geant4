@@ -15,7 +15,8 @@ set(SOURCES
     src/PrimaryGeneratorAction.cc
     src/RunAction.cc
     src/TransmittedSD.cc
-    src/EventAction.cc       
+    src/EventAction.cc   
+    src/DetectorMessenger.cc    
 )
 
 # --- Ejecutable principal ---

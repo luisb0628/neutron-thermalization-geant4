@@ -661,4 +661,5 @@ CMakeFiles/Neutron_Thermalization.dir/main.cc.o: \
  /home/luisb28/software/geant4/install/include/Geant4/G4VUserActionInitialization.hh \
  /home/luisb28/software/geant4/examples/Project/Neutron_Thermalization/include/DetectorConstruction.hh \
  /home/luisb28/software/geant4/install/include/Geant4/G4VPhysicalVolume.hh \
- /home/luisb28/software/geant4/install/include/Geant4/G4VUserDetectorConstruction.hh
+ /home/luisb28/software/geant4/install/include/Geant4/G4VUserDetectorConstruction.hh \
+ /home/luisb28/software/geant4/install/include/Geant4/globals.hh

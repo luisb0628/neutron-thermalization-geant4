@@ -1,8 +1,11 @@
-# beam_transmit.mac
 /control/verbose 2
 /run/verbose 1
 /event/verbose 0
 /tracking/verbose 0
+
+/detector/setParaffinX 1 cm
+/detector/setParaffinY 1 cm
+/detector/setParaffinZ 1 cm
 
 /run/initialize
 
