@@ -10,8 +10,14 @@
 /run/initialize
 
 # Visualización
-/vis/open OGL
-/vis/viewer/set/viewpointThetaPhi 90 0
+/vis/open OGL 2000x2000
+/vis/viewer/set/viewpointThetaPhi 30 20
+
+
+
+
+/vis/geometry/set/colour Block 0 226 212 183 .3
+/vis/geometry/set/colour Detector 0 28 28 28 1
 /vis/viewer/set/style surface
 /vis/viewer/set/autoRefresh true
 /vis/scene/create
@@ -20,6 +26,18 @@
 /vis/scene/add/trajectories smooth
 /vis/scene/add/hits
 /vis/scene/endOfEventAction accumulate
+
+
+# Decorations
+# Name
+/vis/set/textColour green
+/vis/set/textLayout right
+/vis/scene/add/text2D 0.5 -.9 24 ! ! Phase 1 : Thermalization
+/vis/set/textLayout    # Revert to normal (left adjusted) layout
+/vis/set/textColour    # Revert to default text colour (blue)
+
+/vis/scene/add/axes -12 -15 -4.5 30 cm
+
 /vis/enable
 /vis/viewer/refresh
 
@@ -31,6 +49,7 @@
 /gun/number 1
 
 # Simulación
-/run/beamOn 5
+/run/beamOn 1
+
 
 

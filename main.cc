@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         UImanager->ApplyCommand(command + fileName);
     } else {
         // Modo interactivo (interfaz gráfica)
-        UImanager->ApplyCommand("/control/execute ../macros/vis1.mac");
+        UImanager->ApplyCommand("/control/execute ../macros/vis2.mac");
         ui->SessionStart();
         delete ui;
     }
