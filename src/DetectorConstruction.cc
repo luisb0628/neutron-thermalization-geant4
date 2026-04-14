@@ -12,7 +12,6 @@
 #include "G4RegionStore.hh"
 #include "G4ProductionCuts.hh"
 #include "G4Region.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4SystemOfUnits.hh"
 
@@ -51,12 +50,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     auto physWorld  = new G4PVPlacement(0, {}, logicWorld, "World", 0, false, 0);
 
     // --- Bloque de parafina (moderador) ---
-    G4Material* paraffin = G4Material::GetMaterial("Paraffin");
-    if (!paraffin) {
-        paraffin = new G4Material("Paraffin", 0.93*g/cm3, 2);
-        paraffin->AddElement(nist->FindOrBuildElement("C"), 1);
-        paraffin->AddElement(nist->FindOrBuildElement("H"), 2);
-    }
+    G4Material* paraffin = nist->FindOrBuildMaterial("G4_PARAFFIN");
 
     auto solidBlock = new G4Box("Block", fParaffinX, fParaffinY, fParaffinZ);
     auto logicBlock = new G4LogicalVolume(solidBlock, paraffin, "Block");
@@ -73,11 +67,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4double zPos = fParaffinZ + 0.1*cm + detHalfZ;
     new G4PVPlacement(0, G4ThreeVector(0,0,zPos), logicDet, "Detector", logicWorld, false, 0);
 
-    // --- Límites de paso ---
-    G4double maxStep = 0.01*mm;
-    logicWorld->SetUserLimits(new G4UserLimits(maxStep));
-    logicBlock->SetUserLimits(new G4UserLimits(maxStep));
-    logicDet->SetUserLimits(new G4UserLimits(maxStep));
     logicWorld->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     // --- Cortes de producción ---

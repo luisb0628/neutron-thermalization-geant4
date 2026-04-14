@@ -1,5 +1,5 @@
 # Ignorar carpeta de compilación
 /build/
-
+/build1/
 # Ignorar carpeta de análisis
 /Analysis/

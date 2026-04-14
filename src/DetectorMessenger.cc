@@ -4,6 +4,7 @@
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIdirectory.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4RunManager.hh"
 
 // ------------------------------------------------------------
 // Constructor: define los comandos accesibles desde el macro
@@ -59,4 +60,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     else if (command == fParaffinZCmd) {
         fDetector->SetParaffinZ(fParaffinZCmd->GetNewDoubleValue(newValue));
     }
+
+    G4RunManager::GetRunManager()->ReinitializeGeometry();
 }

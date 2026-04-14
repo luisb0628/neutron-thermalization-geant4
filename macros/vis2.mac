@@ -3,9 +3,9 @@
 /event/verbose 0
 /tracking/verbose 0
 
-/detector/setParaffinX 12 cm
-/detector/setParaffinY 15 cm
-/detector/setParaffinZ 4.5 cm
+/detector/setParaffinX 7.5 cm
+/detector/setParaffinY 7.5 cm
+/detector/setParaffinZ 5.0 cm
 
 /run/initialize
 
@@ -32,7 +32,7 @@
 # Name
 /vis/set/textColour green
 /vis/set/textLayout right
-/vis/scene/add/text2D 0.5 -.9 24 ! ! Phase 1 : Thermalization
+/vis/scene/add/text2D 0.5 -.9 24 ! ! Step 1 : Thermalization
 /vis/set/textLayout    # Revert to normal (left adjusted) layout
 /vis/set/textColour    # Revert to default text colour (blue)
 
@@ -44,8 +44,8 @@
 # Configuración del haz
 /gun/particle neutron
 /gun/energy 4.2 MeV
-/gun/position 0 0 -4.6 cm
-/gun/direction 0 0 1
+/gun/position 0 0 -5.1 cm
+/gun/direction 0.612 0.354 0.707
 /gun/number 1
 
 # Simulación
