@@ -5,6 +5,7 @@
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SDManager.hh"
@@ -14,6 +15,7 @@
 #include "G4Region.hh"
 #include "G4VisAttributes.hh"
 #include "G4SystemOfUnits.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 // ------------------------------------------------------------
 // Constructor
@@ -62,11 +64,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     auto logicBlock = new G4LogicalVolume(solidBlock, paraffin, "Block");
     new G4PVPlacement(0, G4ThreeVector(0,0,0), logicBlock, "Block", logicWorld, false, 0);
 
-    // --- Detector plano (cubre toda la cara trasera de la parafina) ---
-    G4double detHalfX = fParaffinX, detHalfY = fParaffinY;
-    G4double detHalfZ = 0.5*mm;
-    auto detMat = nist->FindOrBuildMaterial("G4_AIR");
-    auto solidDet = new G4Box("Detector", detHalfX, detHalfY, detHalfZ);
+    // --- Detector cilíndrico (grafeno dopado con boro, diámetro 2.6 cm) ---
+    G4double detRadius = 1.3*cm;
+    G4double detHalfZ  = 0.5*mm;
+    auto detMat  = nist->FindOrBuildMaterial("G4_AIR");
+    auto solidDet = new G4Tubs("Detector", 0., detRadius, detHalfZ, 0., CLHEP::twopi);
     auto logicDet = new G4LogicalVolume(solidDet, detMat, "Detector");
 
     // Posición del detector justo después de la parafina
