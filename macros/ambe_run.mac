@@ -29,4 +29,4 @@
 #   Cada evento = 1 neutrón AmBe (+ gamma 4.44 MeV con P=60%)
 #   Ajusta beamOn según estadística deseada
 # ----------------------------------------------------------------
-/run/beamOn 50000
+/run/beamOn 500000

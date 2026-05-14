@@ -1,5 +1,16 @@
-# Ignorar carpeta de compilación
+# Carpeta de compilación
 /build/
 
-# Ignorar carpeta de análisis
+# Carpeta de análisis
 /Analysis/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Archivos temporales del editor
+*.swp
+*.swo
+*~
