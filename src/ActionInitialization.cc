@@ -2,9 +2,11 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
+#include "DetectorConstruction.hh"
 
+ActionInitialization::ActionInitialization(const DetectorConstruction* detector)
+ : fDetector(detector) {}
 
-ActionInitialization::ActionInitialization() {}
 ActionInitialization::~ActionInitialization() {}
 
 void ActionInitialization::BuildForMaster() const
@@ -14,14 +16,8 @@ void ActionInitialization::BuildForMaster() const
 
 void ActionInitialization::Build() const
 {
-    auto primaryGenerator = new PrimaryGeneratorAction();
-    SetUserAction(primaryGenerator);
-
-    auto runAction = new RunAction();
+    SetUserAction(new PrimaryGeneratorAction(fDetector));
+    auto* runAction = new RunAction();
     SetUserAction(runAction);
-
-    auto eventAction = new EventAction(runAction);
-    SetUserAction(eventAction);
-
-
+    SetUserAction(new EventAction(runAction));
 }

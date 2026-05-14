@@ -1,0 +1,32 @@
+# ambe_run.mac — Simulación de termalización con fuente AmBe
+/control/verbose 0
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+# ----------------------------------------------------------------
+# Geometría de la parafina (half-lengths)
+# ----------------------------------------------------------------
+/detector/setParaffinX 10 cm
+/detector/setParaffinY 10 cm
+/detector/setParaffinZ 10 cm
+
+# ----------------------------------------------------------------
+# Fuente AmBe
+#   distance : distancia fuente → cara frontal de parafina
+#   activity : en Ci (solo para normalización en el reporte)
+# ----------------------------------------------------------------
+/ambe/distance 10 cm
+/ambe/activity 2.98
+
+# ----------------------------------------------------------------
+# Inicialización
+# ----------------------------------------------------------------
+/run/initialize
+
+# ----------------------------------------------------------------
+# Simulación
+#   Cada evento = 1 neutrón AmBe (+ gamma 4.44 MeV con P=60%)
+#   Ajusta beamOn según estadística deseada
+# ----------------------------------------------------------------
+/run/beamOn 50000

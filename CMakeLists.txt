@@ -13,10 +13,11 @@ set(SOURCES
     src/ActionInitialization.cc
     src/DetectorConstruction.cc
     src/PrimaryGeneratorAction.cc
+    src/SourceMessenger.cc
     src/RunAction.cc
     src/TransmittedSD.cc
-    src/EventAction.cc   
-    src/DetectorMessenger.cc    
+    src/EventAction.cc
+    src/DetectorMessenger.cc
 )
 
 # --- Ejecutable principal ---

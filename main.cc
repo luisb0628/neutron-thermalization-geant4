@@ -17,13 +17,14 @@ int main(int argc, char** argv) {
     auto* runManager = new G4RunManager();
 
     // Construcción del detector
-    runManager->SetUserInitialization(new DetectorConstruction());
+    auto* detector = new DetectorConstruction();
+    runManager->SetUserInitialization(detector);
 
     // Lista de física
     runManager->SetUserInitialization(new QGSP_BERT_HP);
 
     // Inicialización de acciones (PrimaryGenerator, RunAction, EventAction, etc.)
-    runManager->SetUserInitialization(new ActionInitialization());
+    runManager->SetUserInitialization(new ActionInitialization(detector));
 
     // Inicializar el sistema de visualización
     auto* visManager = new G4VisExecutive();

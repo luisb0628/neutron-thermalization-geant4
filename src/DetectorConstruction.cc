@@ -12,7 +12,6 @@
 #include "G4RegionStore.hh"
 #include "G4ProductionCuts.hh"
 #include "G4Region.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4SystemOfUnits.hh"
 
@@ -44,9 +43,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 {
     auto nist = G4NistManager::Instance();
 
-    // --- Mundo ---
+    // --- Mundo (suficientemente grande para parafina + fuente a distancia) ---
     G4Material* worldMat = nist->FindOrBuildMaterial("G4_AIR");
-    auto solidWorld = new G4Box("World", 20*cm, 20*cm, 20*cm);
+    G4double worldHalf = std::max({fParaffinX, fParaffinY, fParaffinZ}) * 4 + 30.*cm;
+    auto solidWorld = new G4Box("World", worldHalf, worldHalf, worldHalf);
     auto logicWorld = new G4LogicalVolume(solidWorld, worldMat, "World");
     auto physWorld  = new G4PVPlacement(0, {}, logicWorld, "World", 0, false, 0);
 
@@ -62,8 +62,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     auto logicBlock = new G4LogicalVolume(solidBlock, paraffin, "Block");
     new G4PVPlacement(0, G4ThreeVector(0,0,0), logicBlock, "Block", logicWorld, false, 0);
 
-    // --- Detector plano ---
-    G4double detHalfX = 1*cm, detHalfY = 1*cm;
+    // --- Detector plano (cubre toda la cara trasera de la parafina) ---
+    G4double detHalfX = fParaffinX, detHalfY = fParaffinY;
     G4double detHalfZ = 0.5*mm;
     auto detMat = nist->FindOrBuildMaterial("G4_AIR");
     auto solidDet = new G4Box("Detector", detHalfX, detHalfY, detHalfZ);
@@ -73,11 +73,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4double zPos = fParaffinZ + 0.1*cm + detHalfZ;
     new G4PVPlacement(0, G4ThreeVector(0,0,zPos), logicDet, "Detector", logicWorld, false, 0);
 
-    // --- Límites de paso ---
-    G4double maxStep = 0.01*mm;
-    logicWorld->SetUserLimits(new G4UserLimits(maxStep));
-    logicBlock->SetUserLimits(new G4UserLimits(maxStep));
-    logicDet->SetUserLimits(new G4UserLimits(maxStep));
     logicWorld->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     // --- Cortes de producción ---
