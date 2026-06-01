@@ -1,0 +1,3 @@
+/vis/viewer/set/viewpointThetaPhi 30 {phi}
+/vis/viewer/flush
+/vis/ogl/export rot_{phi}.eps

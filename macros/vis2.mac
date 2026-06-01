@@ -6,6 +6,7 @@
 /detector/setParaffinX 12 cm
 /detector/setParaffinY 15 cm
 /detector/setParaffinZ 4.5 cm
+/detector/setLeadZ 1.5 cm
 
 /run/initialize
 

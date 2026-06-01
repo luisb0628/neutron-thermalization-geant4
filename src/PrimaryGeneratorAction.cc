@@ -78,8 +78,9 @@ void PrimaryGeneratorAction::BuildAmBeNeutronSource()
 // ------------------------------------------------------------
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
-    // Posición de la fuente: z = -(cara_frontal_parafina + distancia)
-    G4double z = -(fDetector->GetParaffinZ() + fSourceDistance);
+    // Orden: fuente → plomo → parafina → detector
+    // Fuente a fSourceDistance delante de la cara frontal del plomo
+    G4double z = -(fDetector->GetParaffinZ() + 2.*fDetector->GetLeadZ() + fSourceDistance);
     G4ThreeVector srcPos(0., 0., z);
 
     fGPS->GetCurrentSource()->GetPosDist()->SetCentreCoords(srcPos);

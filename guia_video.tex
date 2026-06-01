@@ -1,0 +1,488 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{mdframed}
+\usepackage{amsmath}
+
+% Colores
+\definecolor{bg}{RGB}{30,30,30}
+\definecolor{fg}{RGB}{220,220,220}
+\definecolor{kw}{RGB}{86,156,214}
+\definecolor{cm}{RGB}{106,153,85}
+\definecolor{st}{RGB}{206,145,120}
+\definecolor{nb}{RGB}{78,201,176}
+\definecolor{warnbg}{RGB}{255,248,220}
+\definecolor{warnborder}{RGB}{200,150,0}
+\definecolor{tipbg}{RGB}{220,240,255}
+\definecolor{tipborder}{RGB}{0,100,200}
+
+% Estilo listings — consola oscura
+\lstdefinestyle{console}{
+  backgroundcolor=\color{bg},
+  basicstyle=\ttfamily\small\color{fg},
+  keywordstyle=\color{kw}\bfseries,
+  commentstyle=\color{cm}\itshape,
+  stringstyle=\color{st},
+  numberstyle=\tiny\color{gray},
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{gray!50},
+  xleftmargin=1em,
+  xrightmargin=0.5em,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+  showstringspaces=false,
+}
+
+% Estilo listings — código macro Geant4
+\lstdefinestyle{macro}{
+  backgroundcolor=\color{bg},
+  basicstyle=\ttfamily\small\color{fg},
+  commentstyle=\color{cm}\itshape,
+  morecomment=[l]{\#},
+  keywordstyle=\color{kw},
+  morekeywords={/detector,/ambe,/run,/vis,/event,/tracking,/control},
+  stringstyle=\color{st},
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{gray!50},
+  xleftmargin=1em,
+  xrightmargin=0.5em,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+  showstringspaces=false,
+  breaklines=true,
+}
+
+% Cajas de advertencia y tip
+\newmdenv[
+  backgroundcolor=warnbg,
+  linecolor=warnborder,
+  linewidth=2pt,
+  topline=false, bottomline=false,
+  rightline=false,
+  innerleftmargin=10pt,
+  innerrightmargin=10pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+]{advertencia}
+
+\newmdenv[
+  backgroundcolor=tipbg,
+  linecolor=tipborder,
+  linewidth=2pt,
+  topline=false, bottomline=false,
+  rightline=false,
+  innerleftmargin=10pt,
+  innerrightmargin=10pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+]{tip}
+
+% Encabezado / pie
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textcolor{gray}{\small Neutron Thermalization — AmBe}}
+\lhead{\textcolor{gray}{\small Guía de visualización}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Títulos con número en color
+\titleformat{\section}{\large\bfseries\color{black}}{%
+  \colorbox{black}{\textcolor{white}{\thesection}}}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{%
+  \thesubsection}{0.5em}{}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!70!black,
+  urlcolor=blue!70!black,
+}
+
+% -------------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{3cm}
+  {\Huge\bfseries Guía: de macro a video\par}
+  \vspace{0.5cm}
+  {\large Simulación de termalización de neutrones con fuente AmBe\par}
+  \vspace{0.3cm}
+  {\large Geant4 + Python + ffmpeg\par}
+  \vspace{2cm}
+  \rule{\textwidth}{1pt}
+  \vspace{0.4cm}
+  {\normalsize
+    \begin{tabular}{ll}
+      Proyecto:   & Neutron\_Thermalization \\
+      Branch:     & \texttt{ambe\_source} \\
+      Simulador:  & Geant4 11.04-beta-01 (OGLSX + gl2ps 1.4.2) \\
+      Entorno Python: & \texttt{mi\_entorno} (virtualenv) \\
+      Fecha:      & Mayo 2026 \\
+    \end{tabular}
+  }
+  \vspace{0.5cm}
+  \rule{\textwidth}{1pt}
+  \vspace{2cm}
+
+  \begin{tip}
+    \textbf{Resumen del flujo:}
+    \begin{enumerate}[noitemsep]
+      \item Editar \texttt{vis\_video.mac} (geometría, fuente, colores).
+      \item Correr Geant4 $\to$ genera 120 archivos EPS por evento.
+      \item Convertir EPS $\to$ PNG con Ghostscript.
+      \item Acumular frames con Python (\texttt{accumulate\_frames.py}).
+      \item Compilar video MP4 con \texttt{ffmpeg}.
+    \end{enumerate}
+  \end{tip}
+\end{titlepage}
+
+% -------------------------------------------------------------------
+\tableofcontents
+\newpage
+
+% -------------------------------------------------------------------
+\section{Estructura de archivos relevantes}
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+  \toprule
+  \textbf{Archivo} & \textbf{Función} \\
+  \midrule
+  \texttt{macros/vis\_video.mac}       & Macro principal: geometría, fuente, escena, loop de eventos \\
+  \texttt{macros/vis\_video\_frame.mac} & Sub-macro: un evento $+$ flush $+$ export EPS \\
+  \texttt{python/accumulate\_frames.py} & Acumula PNGs frame a frame con overlay del cubo \\
+  \texttt{build/}                       & Directorio de compilación; aquí se genera todo \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Los comandos de esta guía se ejecutan \textbf{siempre desde \texttt{build/}},
+salvo que se indique lo contrario.
+
+% -------------------------------------------------------------------
+\section{El macro principal: \texttt{vis\_video.mac}}
+
+A continuación se muestra el macro completo con comentarios explicativos.
+
+\lstinputlisting[style=macro, caption={macros/vis\_video.mac — macro completo}]{macros/vis_video.mac}
+
+\subsection{Parámetros que querrás cambiar}
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  \textbf{Parámetro} & \textbf{Línea en el macro} & \textbf{Efecto} \\
+  \midrule
+  Tamaño de la caja de parafina & \texttt{/detector/setParaffinX/Y/Z}
+    & Dimensiones del moderador (half-extents) \\
+  Distancia fuente--detector  & \texttt{/ambe/distance}
+    & Posición de la fuente AmBe a lo largo de X \\
+  Actividad                   & \texttt{/ambe/activity}
+    & Factor de escala del espectro (neutrones/$\mu$s) \\
+  Ángulo de vista             & \texttt{/vis/viewer/set/viewpointThetaPhi}
+    & $\theta$ (elevación) y $\phi$ (azimut) en grados \\
+  Color caja de parafina      & \texttt{/vis/geometry/set/colour Block}
+    & R G B A, todos en [0,1] \\
+  Color detector              & \texttt{/vis/geometry/set/colour Detector}
+    & R G B A, todos en [0,1] \\
+  Número de eventos           & \texttt{/control/loop \ldots{} 1 120 1}
+    & Cambiar \texttt{120} al número de frames deseado \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{advertencia}
+  \textbf{Importante — colores en Geant4:} el comando
+  \texttt{/vis/geometry/set/colour} espera valores flotantes en $[0,1]$,
+  \emph{no} enteros RGB de 0--255.
+  Usar valores como \texttt{79 74 64} los clampea a 1.0 (blanco puro).
+  Usa siempre valores como \texttt{0.47 0.43 0.35}.
+\end{advertencia}
+
+\subsection{Sub-macro de frame: \texttt{vis\_video\_frame.mac}}
+
+Este archivo es invocado por el \texttt{/control/loop} del macro principal.
+La variable \texttt{\{i\}} se sustituye automáticamente con el número de iteración.
+
+\lstinputlisting[style=macro, caption={macros/vis\_video\_frame.mac}]{macros/vis_video_frame.mac}
+
+Cada iteración: corre 1 evento, vuelca la escena y exporta un EPS nombrado
+\texttt{frame\_\{i\}.eps} en el directorio de trabajo (\texttt{build/}).
+
+% -------------------------------------------------------------------
+\section{Paso 1 — Generar el frame de referencia del cubo}
+
+Antes de lanzar los 120 eventos, se genera \textbf{un único frame} con la
+caja de parafina sólida y sin trayectorias. Este PNG se usará después como
+overlay semitransparente para que los bordes del cubo sean visibles.
+
+\begin{lstlisting}[style=console, caption={Generar box\_frame.png desde build/}]
+# Dentro de build/, con el ejecutable ya compilado:
+./neutron_therm ../macros/vis_video.mac
+# Geant4 abre OGLSX, configura la escena y ejecuta el loop.
+# Al terminar hay 120 archivos frame_{i}.eps en build/
+\end{lstlisting}
+
+\begin{tip}
+  Si sólo quieres regenerar \texttt{box\_frame.png} (por ejemplo, para cambiar
+  el color de la caja sin re-correr la simulación completa), crea un macro
+  mínimo:
+\begin{lstlisting}[style=macro]
+# box_only.mac
+/detector/setParaffinX 10 cm
+/detector/setParaffinY 10 cm
+/detector/setParaffinZ 10 cm
+/ambe/distance 10 cm
+/ambe/activity 2.98
+/run/initialize
+/vis/open OGLSX 1280x720
+/vis/viewer/set/viewpointThetaPhi 30 20
+/vis/viewer/set/background 0 0 0 1
+/vis/geometry/set/colour Block    0 0.65 0.60 0.48 1.0
+/vis/geometry/set/colour Detector 0 1.0  0.55 0.0  1.0
+/vis/viewer/set/style surface
+/vis/scene/create
+/vis/scene/add/volume
+/vis/drawVolume
+/vis/enable
+/vis/viewer/refresh
+/vis/ogl/set/exportFormat eps
+/vis/ogl/export box_frame_0000.eps
+\end{lstlisting}
+y convierte con Ghostscript (ver Paso 2).
+\end{tip}
+
+% -------------------------------------------------------------------
+\section{Paso 2 — Convertir EPS a PNG con Ghostscript}
+
+Geant4 exporta en formato EPS (Encapsulated PostScript).
+Ghostscript convierte cada EPS a un PNG de 1280$\times$720.
+
+\begin{lstlisting}[style=console, caption={Conversión por lotes — desde build/}]
+# Frame de referencia del cubo
+gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r72 -dEPSCrop \
+   -sOutputFile=box_frame.png box_frame_0000.eps
+
+# Los 120 frames de trayectorias
+for i in $(seq -f "%04g" 1 120); do
+    gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r72 -dEPSCrop \
+       -sOutputFile=frame_${i}.png frame_${i}.eps
+done
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{ll}
+  \toprule
+  \textbf{Flag gs} & \textbf{Significado} \\
+  \midrule
+  \texttt{-dNOPAUSE -dBATCH} & Modo no interactivo \\
+  \texttt{-sDEVICE=png16m}    & Salida PNG de 24 bits \\
+  \texttt{-r72}               & 72 dpi (ajusta el tamaño de píxeles a ~1280$\times$720) \\
+  \texttt{-dEPSCrop}          & Recorta al bounding box del EPS \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Si quieres mayor resolución, sube \texttt{-r144} (doble) o \texttt{-r216} (triple),
+y ajusta correspondientemente el tamaño de ventana OGLSX en el macro.
+
+% -------------------------------------------------------------------
+\section{Paso 3 — Acumular frames con Python}
+
+El script \texttt{accumulate\_frames.py} genera los frames acumulados:
+el frame $N$ muestra las trayectorias de los eventos 1 a $N$ superpuestas,
+con el cubo de referencia como overlay tenue.
+
+\begin{lstlisting}[style=console, caption={Acumulación — desde build/}]
+source ~/mi_entorno/bin/activate
+
+python3 ../python/accumulate_frames.py \
+    --n 120 \
+    --box box_frame.png \
+    --box-alpha 0.25
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{lp{8.5cm}}
+  \toprule
+  \textbf{Argumento} & \textbf{Descripción} \\
+  \midrule
+  \texttt{--n 120}             & Número total de frames (debe coincidir con el loop del macro) \\
+  \texttt{--box box\_frame.png} & PNG del cubo sólido de referencia \\
+  \texttt{--box-alpha 0.25}    & Opacidad del overlay del cubo (0 = invisible, 1 = opaco) \\
+  \texttt{--indir .}           & Directorio donde están los \texttt{frame\_NNNN.png} (default: \texttt{.}) \\
+  \texttt{--outdir .}          & Directorio de salida para los \texttt{accum\_NNNN.png} (default: \texttt{.}) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Esto genera \texttt{accum\_0001.png} \ldots{} \texttt{accum\_0120.png}.
+
+\subsection{Cómo funciona la acumulación}
+
+\begin{enumerate}
+  \item Para cada frame $N$: se calcula \texttt{np.maximum(acumulado, frame\_N)},
+        manteniendo el pixel más brillante de todos los eventos anteriores.
+  \item Se aplica el overlay: \texttt{np.maximum(acumulado, cubo $\times$ alpha)}.
+        Como las trayectorias son blancas/amarillas (valor 255) y el overlay
+        es tenue ($\sim$40), el \texttt{maximum} siempre elige la trayectoria
+        donde hay una; el cubo sólo se ve donde \emph{no} hay trayectorias.
+  \item El resultado se guarda como \texttt{accum\_NNNN.png}.
+\end{enumerate}
+
+\begin{tip}
+  Para cambiar sólo la opacidad del cubo sin re-correr la simulación,
+  basta con ajustar \texttt{--box-alpha} y re-ejecutar este paso.
+  Los \texttt{frame\_NNNN.png} ya están en disco.
+\end{tip}
+
+% -------------------------------------------------------------------
+\section{Paso 4 — Compilar el video con ffmpeg}
+
+\begin{lstlisting}[style=console, caption={Compilar video MP4 — desde build/}]
+ffmpeg -y \
+    -framerate 60 \
+    -start_number 1 \
+    -i accum_%04d.png \
+    -c:v libx264 \
+    -pix_fmt yuv420p \
+    -crf 18 \
+    video_simulacion.mp4
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{lp{8.5cm}}
+  \toprule
+  \textbf{Flag ffmpeg} & \textbf{Descripción} \\
+  \midrule
+  \texttt{-framerate 60}   & 60 fps $\Rightarrow$ 120 eventos = 2 segundos de video \\
+  \texttt{-start\_number 1} & El primer archivo es \texttt{accum\_0001.png} \\
+  \texttt{-c:v libx264}    & Codec H.264 (compatible con casi todo) \\
+  \texttt{-pix\_fmt yuv420p} & Formato de color compatible con reproductores \\
+  \texttt{-crf 18}         & Calidad alta (0 = lossless, 51 = mínima) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Para cambiar la duración del video, ajusta \texttt{-framerate}:
+a 30 fps serían 4 segundos; a 15 fps, 8 segundos.
+
+% -------------------------------------------------------------------
+\section{Paso 5 — Limpieza de archivos intermedios}
+
+Los archivos EPS y los PNGs individuales pueden ocupar varios cientos de MB.
+Una vez compilado el video, se pueden eliminar:
+
+\begin{lstlisting}[style=console, caption={Limpieza — desde build/}]
+rm -f frame_*.eps frame_*.png accum_*.png box_frame*.eps
+
+# Verificar que el video quedó bien
+ls -lh video_simulacion.mp4
+\end{lstlisting}
+
+% -------------------------------------------------------------------
+\section{Flujo completo en un solo bloque}
+
+El siguiente bloque ejecuta todo el pipeline de una vez, asumiendo que
+ya se editó \texttt{vis\_video.mac} y que el ejecutable está compilado en \texttt{build/}.
+
+\begin{lstlisting}[style=console, caption={Pipeline completo — desde build/}]
+# 1. Simulación Geant4 (genera frame_1.eps ... frame_120.eps y box_frame_0000.eps)
+./neutron_therm ../macros/vis_video.mac
+
+# 2. Conversión EPS -> PNG
+gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r72 -dEPSCrop \
+   -sOutputFile=box_frame.png box_frame_0000.eps
+
+for i in $(seq -f "%04g" 1 120); do
+    gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r72 -dEPSCrop \
+       -sOutputFile=frame_${i}.png frame_${i}.eps
+done
+
+# 3. Acumulación con overlay del cubo
+source ~/mi_entorno/bin/activate
+python3 ../python/accumulate_frames.py \
+    --n 120 --box box_frame.png --box-alpha 0.25
+
+# 4. Compilar video
+ffmpeg -y -framerate 60 -start_number 1 -i accum_%04d.png \
+    -c:v libx264 -pix_fmt yuv420p -crf 18 video_simulacion.mp4
+
+# 5. Limpiar intermedios
+rm -f frame_*.eps frame_*.png accum_*.png box_frame*.eps
+
+echo "Listo: video_simulacion.mp4"
+\end{lstlisting}
+
+% -------------------------------------------------------------------
+\section{Solución de problemas comunes}
+
+\begin{center}
+\begin{tabular}{p{4.5cm}p{9.5cm}}
+  \toprule
+  \textbf{Síntoma} & \textbf{Causa y solución} \\
+  \midrule
+  Parafina siempre blanca aunque cambies el color
+    & Los valores RGB no están en $[0,1]$. Geant4 clampea integers al máximo.
+      Usa \texttt{0.47 0.43 0.35}, no \texttt{79 74 64}. \\
+  \addlinespace
+  Los bordes del cubo salen azules en modo wireframe
+    & Limitación de \texttt{gl2ps 1.4.2}: ignora el color asignado a wireframes
+      y los renderiza en azul. La solución adoptada es el overlay en Python. \\
+  \addlinespace
+  Trayectorias tapadas por la cara frontal de la caja
+    & Geant4 usa el algoritmo del pintor; la cara frontal se dibuja encima.
+      Solución: modo \texttt{wireframe} en el macro + overlay en Python. \\
+  \addlinespace
+  Los PNG salen en blanco o muy pequeños
+    & Ajusta \texttt{-r72} en Ghostscript. Prueba \texttt{-r96} si la imagen
+      queda pequeña. \\
+  \addlinespace
+  El video dura muy poco o va muy rápido
+    & Baja el framerate: \texttt{-framerate 30} (4 s) o \texttt{-framerate 15} (8 s). \\
+  \addlinespace
+  \texttt{./neutron\_therm: command not found}
+    & Falta compilar. Desde \texttt{build/}: \texttt{cmake .. \&\& make -j4}. \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+% -------------------------------------------------------------------
+\section{Referencia rápida de colores de partículas}
+
+Los colores de las trayectorias se definen en \texttt{vis\_video.mac}:
+
+\begin{lstlisting}[style=macro]
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set neutron white
+/vis/modeling/trajectories/drawByParticleID-0/set gamma  yellow
+/vis/modeling/trajectories/drawByParticleID-0/set e-     red
+\end{lstlisting}
+
+Para agregar otras partículas (p.ej., protones de retroceso):
+\begin{lstlisting}[style=macro]
+/vis/modeling/trajectories/drawByParticleID-0/set proton cyan
+\end{lstlisting}
+
+Los nombres de colores aceptados por Geant4 incluyen:
+\texttt{white}, \texttt{black}, \texttt{red}, \texttt{green}, \texttt{blue},
+\texttt{yellow}, \texttt{cyan}, \texttt{magenta}, \texttt{grey}, \texttt{orange}.
+
+\end{document}

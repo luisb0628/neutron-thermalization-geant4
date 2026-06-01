@@ -8,16 +8,20 @@ import uproot
 # =============================================================
 #  Parámetros del barrido — edita aquí
 # =============================================================
-BEAM_ON   = 50000          # disparos por simulación
+BEAM_ON   = 100000          # disparos por simulación
 ACTIVITY  = 2.98           # Ci (solo para normalización)
 
 # Geometría de la parafina (half-lengths en cm)
-X_values = [1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0]          # cm  →  bloque de 10 y 20 cm de ancho
-Y_values = [1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0]          # cm
-Z_values = [1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0]    # cm  →  espesores a estudiar
+X_values = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0]
+Y_values = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0]
+Z_values = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0]
 
-# Distancias fuente → cara frontal de parafina
-DIST_values = [1,10]  # cm
+# Espesor del bloque de plomo (half-length en cm; espesor_total = 2 × valor)
+# Area fija 20x20 cm. Ejemplo: 1.5 cm → bloque de 3 cm de espesor
+LEAD_Z_values = [1.5]  # cm
+
+# Distancias fuente → cara frontal del PLOMO
+DIST_values = [0]  # cm
 
 # =============================================================
 #  Rutas
@@ -30,10 +34,11 @@ MACRO_TMP = os.path.join(BUILD_DIR, "auto_ambe.mac")
 results = []
 total_start = time.time()
 
-combos = [(x, y, z, d)
+combos = [(x, y, z, lz, d)
           for x in X_values
           for y in Y_values
           for z in Z_values
+          for lz in LEAD_Z_values
           for d in DIST_values]
 
 print(f"Simulaciones a correr: {len(combos)}")
@@ -41,13 +46,18 @@ print(f"Disparos por sim     : {BEAM_ON:,}")
 print(f"Actividad fuente     : {ACTIVITY} Ci")
 print("=" * 60)
 
-for i, (X, Y, Z, dist) in enumerate(combos, 1):
+for i, (X, Y, Z, LZ, dist) in enumerate(combos, 1):
 
-    tag = f"{2*X:.0f}x{2*Y:.0f}x{2*Z:.0f}cm_d{dist:.0f}cm"
-    print(f"\n[{i}/{len(combos)}] Parafina {2*X}x{2*Y}x{2*Z} cm  |  distancia {dist} cm", flush=True)
+    tag  = f"{2*X:.0f}x{2*Y:.0f}x{2*Z:.0f}cm_pb{2*LZ:.0f}cm_d{dist:.0f}cm"
+    dest = os.path.join(BUILD_DIR, f"AmBe_{tag}.root")
+    print(f"\n[{i}/{len(combos)}] Parafina {2*X}x{2*Y}x{2*Z} cm  |  Pb {2*LZ:.0f} cm  |  dist {dist} cm", flush=True)
 
-    # --- Macro temporal ---
-    macro = f"""\
+    if os.path.exists(dest):
+        print("  SKIP: ya existe, leyendo resultado guardado.", flush=True)
+        elapsed = 0.0
+    else:
+        # --- Macro temporal ---
+        macro = f"""\
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
@@ -56,6 +66,7 @@ for i, (X, Y, Z, dist) in enumerate(combos, 1):
 /detector/setParaffinX {X} cm
 /detector/setParaffinY {Y} cm
 /detector/setParaffinZ {Z} cm
+/detector/setLeadZ {LZ} cm
 
 /ambe/distance {dist} cm
 /ambe/activity {ACTIVITY}
@@ -63,26 +74,28 @@ for i, (X, Y, Z, dist) in enumerate(combos, 1):
 /run/initialize
 /run/beamOn {BEAM_ON}
 """
-    with open(MACRO_TMP, "w") as f:
-        f.write(macro)
+        with open(MACRO_TMP, "w") as f:
+            f.write(macro)
 
-    # --- Correr Geant4 ---
-    t0 = time.time()
-    subprocess.run([EXE, MACRO_TMP],
-                   stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL,
-                   cwd=BUILD_DIR)
-    elapsed = time.time() - t0
-    mins, secs = divmod(elapsed, 60)
-    print(f"  Duracion: {int(mins)} min {secs:.1f} s", flush=True)
+        # --- Correr Geant4 ---
+        t0 = time.time()
+        subprocess.run([EXE, MACRO_TMP],
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL,
+                       cwd=BUILD_DIR)
+        elapsed = time.time() - t0
+        mins, secs = divmod(elapsed, 60)
+        print(f"  Duracion: {int(mins)} min {secs:.1f} s", flush=True)
+
+        if not os.path.exists(ROOT_FILE):
+            print("  AVISO: no se encontro AmBePhaseSpace.root")
+            continue
+
+        os.replace(ROOT_FILE, dest)
 
     # --- Leer ROOT ---
-    if not os.path.exists(ROOT_FILE):
-        print("  AVISO: no se encontro AmBePhaseSpace.root")
-        continue
-
     try:
-        with uproot.open(ROOT_FILE) as froot:
+        with uproot.open(dest) as froot:
             tree = froot["PhaseSpace"]
             arr  = tree.arrays(["Particle", "KinE_eV"], library="np")
 
@@ -117,6 +130,7 @@ for i, (X, Y, Z, dist) in enumerate(combos, 1):
             "Ancho_cm":        2 * X,
             "Alto_cm":         2 * Y,
             "Espesor_cm":      2 * Z,
+            "Plomo_cm":        2 * LZ,
             "Distancia_cm":    dist,
             "BeamOn":          BEAM_ON,
             "Actividad_Ci":    ACTIVITY,
@@ -133,9 +147,6 @@ for i, (X, Y, Z, dist) in enumerate(combos, 1):
             "Tasa_n_det_ps":   round(tasa_n_detector, 2),
         })
 
-        # Guardar copia del ROOT para esta configuración
-        dest = os.path.join(BUILD_DIR, f"AmBe_{tag}.root")
-        os.replace(ROOT_FILE, dest)
 
     except Exception as e:
         print(f"  ERROR leyendo ROOT: {e}")

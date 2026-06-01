@@ -12,7 +12,7 @@ SourceMessenger::SourceMessenger(PrimaryGeneratorAction* source)
     fAmBeDir->SetGuidance("Comandos para la fuente AmBe.");
 
     fDistanceCmd = new G4UIcmdWithADoubleAndUnit("/ambe/distance", this);
-    fDistanceCmd->SetGuidance("Distancia de la fuente a la cara frontal de la parafina.");
+    fDistanceCmd->SetGuidance("Distancia de la fuente a la cara frontal del plomo.");
     fDistanceCmd->SetParameterName("dist", false);
     fDistanceCmd->SetDefaultUnit("cm");
     fDistanceCmd->SetUnitCategory("Length");

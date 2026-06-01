@@ -1,8 +1,8 @@
-# Carpeta de compilación
-/build/
+# Compilación
+build/
 
-# Carpeta de análisis
-/Analysis/
+# Análisis
+Analysis/
 
 # Python
 __pycache__/
@@ -14,3 +14,10 @@ __pycache__/
 *.swp
 *.swo
 *~
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

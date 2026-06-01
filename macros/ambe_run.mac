@@ -7,16 +7,23 @@
 # ----------------------------------------------------------------
 # Geometría de la parafina (half-lengths)
 # ----------------------------------------------------------------
-/detector/setParaffinX 10 cm
-/detector/setParaffinY 10 cm
-/detector/setParaffinZ 10 cm
+/detector/setParaffinX 7 cm
+/detector/setParaffinY 7 cm
+/detector/setParaffinZ 4 cm
+
+# ----------------------------------------------------------------
+# Bloque de plomo (half-length en Z = espesor/2)
+#   Area fija: 20x20 cm
+#   Espesor inicial: 3 cm → setLeadZ = 1.5 cm
+# ----------------------------------------------------------------
+/detector/setLeadZ 2.5 cm
 
 # ----------------------------------------------------------------
 # Fuente AmBe
-#   distance : distancia fuente → cara frontal de parafina
+#   distance : distancia fuente → cara frontal del PLOMO
 #   activity : en Ci (solo para normalización en el reporte)
 # ----------------------------------------------------------------
-/ambe/distance 10 cm
+/ambe/distance 0 cm
 /ambe/activity 2.98
 
 # ----------------------------------------------------------------
@@ -29,4 +36,4 @@
 #   Cada evento = 1 neutrón AmBe (+ gamma 4.44 MeV con P=60%)
 #   Ajusta beamOn según estadística deseada
 # ----------------------------------------------------------------
-/run/beamOn 500000
+/run/beamOn 100000

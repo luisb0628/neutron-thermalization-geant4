@@ -18,10 +18,11 @@ public:
 private:
     DetectorConstruction* fDetector;  // referencia al detector
 
-    G4UIdirectory* fDetectorDir;  // carpeta /detector/
+    G4UIdirectory* fDetectorDir;
     G4UIcmdWithADoubleAndUnit* fParaffinXCmd;
     G4UIcmdWithADoubleAndUnit* fParaffinYCmd;
     G4UIcmdWithADoubleAndUnit* fParaffinZCmd;
+    G4UIcmdWithADoubleAndUnit* fLeadZCmd;
 };
 
 #endif

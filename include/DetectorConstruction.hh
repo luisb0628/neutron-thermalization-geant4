@@ -20,17 +20,18 @@ public:
     void SetParaffinX(G4double val) { fParaffinX = val; }
     void SetParaffinY(G4double val) { fParaffinY = val; }
     void SetParaffinZ(G4double val) { fParaffinZ = val; }
+    void SetLeadZ(G4double val)     { fLeadZ = val; }
 
-    // (Opcional: getters si los necesitas)
     G4double GetParaffinX() const { return fParaffinX; }
     G4double GetParaffinY() const { return fParaffinY; }
     G4double GetParaffinZ() const { return fParaffinZ; }
+    G4double GetLeadZ()     const { return fLeadZ; }
 
 private:
-    // --- NUEVAS VARIABLES: medias longitudes del bloque de parafina ---
     G4double fParaffinX;
     G4double fParaffinY;
     G4double fParaffinZ;
+    G4double fLeadZ;       // media longitud del bloque de plomo en Z
     DetectorMessenger* fMessenger;
 };
 

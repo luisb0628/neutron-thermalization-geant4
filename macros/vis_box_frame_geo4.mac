@@ -1,0 +1,30 @@
+# vis_box_frame_geo4.mac — overlay: Placa cuadrada 20x20x8 cm
+/control/macroPath ../macros
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/detector/setParaffinX 10 cm
+/detector/setParaffinY 10 cm
+/detector/setParaffinZ 4 cm
+/detector/setLeadZ 1.5 cm
+/ambe/distance 3 cm
+/ambe/activity 2.98
+
+/run/initialize
+
+/vis/open OGLSX 1280x720
+/vis/viewer/set/viewpointThetaPhi 70 20
+/vis/viewer/set/background 0 0 0 1
+/vis/geometry/set/colour Block    0 1.0 1.0 0.6 0.6
+/vis/geometry/set/colour Lead     0 0.6 0.6 0.6 0.8
+/vis/geometry/set/colour Detector 0 1.0 0.55 0.0 1.0
+/vis/viewer/set/style surface
+/vis/scene/create
+/vis/scene/add/volume
+/vis/drawVolume
+/vis/enable
+/vis/viewer/refresh
+/vis/ogl/set/exportFormat eps
+/vis/ogl/export box_frame.eps

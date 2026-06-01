@@ -27,11 +27,18 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* detector)
     fParaffinYCmd->SetParameterName("Y", false);
     fParaffinYCmd->SetUnitCategory("Length");
 
-    // --- Comando para Z ---
+    // --- Comando para Z (parafina) ---
     fParaffinZCmd = new G4UIcmdWithADoubleAndUnit("/detector/setParaffinZ", this);
     fParaffinZCmd->SetGuidance("Define el tamaño medio (half-length) en Z (espesor) de la parafina.");
     fParaffinZCmd->SetParameterName("Z", false);
     fParaffinZCmd->SetUnitCategory("Length");
+
+    // --- Comando para espesor del plomo (half-length) ---
+    fLeadZCmd = new G4UIcmdWithADoubleAndUnit("/detector/setLeadZ", this);
+    fLeadZCmd->SetGuidance("Define la media longitud en Z del bloque de plomo (espesor_total/2).");
+    fLeadZCmd->SetParameterName("LeadZ", false);
+    fLeadZCmd->SetDefaultUnit("cm");
+    fLeadZCmd->SetUnitCategory("Length");
 }
 
 // ------------------------------------------------------------
@@ -42,6 +49,7 @@ DetectorMessenger::~DetectorMessenger()
     delete fParaffinXCmd;
     delete fParaffinYCmd;
     delete fParaffinZCmd;
+    delete fLeadZCmd;
     delete fDetectorDir;
 }
 
@@ -58,5 +66,8 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if (command == fParaffinZCmd) {
         fDetector->SetParaffinZ(fParaffinZCmd->GetNewDoubleValue(newValue));
+    }
+    else if (command == fLeadZCmd) {
+        fDetector->SetLeadZ(fLeadZCmd->GetNewDoubleValue(newValue));
     }
 }
