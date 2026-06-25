@@ -35,9 +35,5 @@ void RunAction::EndOfRunAction(const G4Run* run)
            << "  Simulación AmBe completada\n"
            << "  Eventos simulados : " << nEvents << "\n"
            << "  Archivo           : AmBePhaseSpace.root\n"
-           << "\n"
-           << "  Para normalizar resultados:\n"
-           << "    Tasa real [part/s] = (N_detectadas / N_simulados)\n"
-           << "                       x actividad[Ci] x 2.2e6 [n/s/Ci]\n"
            << "====================================================\n" << G4endl;
 }

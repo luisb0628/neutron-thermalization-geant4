@@ -9,14 +9,14 @@
 # ----------------------------------------------------------------
 /detector/setParaffinX 7 cm
 /detector/setParaffinY 7 cm
-/detector/setParaffinZ 4 cm
+/detector/setParaffinZ 4.5 cm
 
 # ----------------------------------------------------------------
 # Bloque de plomo (half-length en Z = espesor/2)
 #   Area fija: 20x20 cm
 #   Espesor inicial: 3 cm → setLeadZ = 1.5 cm
 # ----------------------------------------------------------------
-/detector/setLeadZ 2.5 cm
+/detector/setLeadZ 0.00000001 cm
 
 # ----------------------------------------------------------------
 # Fuente AmBe
@@ -36,4 +36,4 @@
 #   Cada evento = 1 neutrón AmBe (+ gamma 4.44 MeV con P=60%)
 #   Ajusta beamOn según estadística deseada
 # ----------------------------------------------------------------
-/run/beamOn 100000
+/run/beamOn 1000000

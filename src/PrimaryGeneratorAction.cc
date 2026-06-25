@@ -11,7 +11,7 @@
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(const DetectorConstruction* detector)
  : fDetector(detector),
-   fSourceDistance(10.*cm),
+   fSourceDistance(0.*cm),
    fActivity(2.98)
 {
     fGPS      = new G4GeneralParticleSource();
@@ -19,7 +19,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const DetectorConstruction* detec
 
     auto* table = G4ParticleTable::GetParticleTable();
     fGammaGun->SetParticleDefinition(table->FindParticle("gamma"));
-    fGammaGun->SetParticleEnergy(4.44*MeV);
+    fGammaGun->SetParticleEnergy(0.000000044*MeV);
 
     BuildAmBeNeutronSource();
 
@@ -87,7 +87,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     fGPS->GeneratePrimaryVertex(event);
 
     // ~60% de los neutrones AmBe llevan un gamma 4.44 MeV (C-12* → C-12)
-    if (G4UniformRand() < 0.6) {
+    if (G4UniformRand() < 0.000000000000001) {
         G4double cosTheta = 2.*G4UniformRand() - 1.;
         G4double sinTheta = std::sqrt(1. - cosTheta*cosTheta);
         G4double phi      = CLHEP::twopi * G4UniformRand();

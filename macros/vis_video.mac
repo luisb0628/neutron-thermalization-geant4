@@ -6,24 +6,23 @@
 /tracking/verbose 0
 
 # Geometría
-/detector/setParaffinX 10 cm
-/detector/setParaffinY 10 cm
-/detector/setParaffinZ 10 cm
-/detector/setLeadZ 1.5 cm
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
+/detector/setLeadZ 2 cm
 
 # Fuente AmBe
-/ambe/distance 5 cm
+/ambe/distance 0 cm
 /ambe/activity 2.98
 
 /run/initialize
 
 # Visualización
-/vis/open OGLSX 1280x720
-/vis/viewer/set/viewpointThetaPhi 70 20
-/vis/viewer/set/background 0 0 0 1
-/vis/geometry/set/colour Block    0 1.0 1.0 0.6 0.6
-/vis/geometry/set/colour Lead     0 0.6 0.6 0.6 0.8
-/vis/geometry/set/colour Detector 0 1.0 0.55 0.0 1.0
+/vis/open OGLSX 2000x2000
+/vis/viewer/set/viewpointThetaPhi 30 20
+/vis/geometry/set/colour Block 0 226 212 183 .3
+/vis/geometry/set/colour Detector 0 28 28 28 1
+/vis/geometry/set/colour Lead 0 0 212 200 .3
 /vis/viewer/set/style wireframe
 /vis/geometry/set/forceSolid Detector 0
 /vis/scene/create
@@ -36,8 +35,8 @@
 
 # Colores por tipo de partícula
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/set neutron white
-/vis/modeling/trajectories/drawByParticleID-0/set gamma yellow
+/vis/modeling/trajectories/drawByParticleID-0/set neutron blue
+/vis/modeling/trajectories/drawByParticleID-0/set gamma green
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
 
 # Etiqueta

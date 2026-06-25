@@ -3,10 +3,10 @@
 /event/verbose 0
 /tracking/verbose 0
 
-/detector/setParaffinX 12 cm
-/detector/setParaffinY 15 cm
-/detector/setParaffinZ 4.5 cm
-/detector/setLeadZ 1.5 cm
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
+/detector/setLeadZ 2 cm
 
 /run/initialize
 
@@ -19,12 +19,17 @@
 
 /vis/geometry/set/colour Block 0 226 212 183 .3
 /vis/geometry/set/colour Detector 0 28 28 28 1
+/vis/geometry/set/colour Lead 0 0 212 200 .3
 /vis/viewer/set/style surface
 /vis/viewer/set/autoRefresh true
 /vis/scene/create
 /vis/scene/add/volume
 /vis/drawVolume
 /vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set neutron blue
+/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+/vis/modeling/trajectories/drawByParticleID-0/set e- red
 /vis/scene/add/hits
 /vis/scene/endOfEventAction accumulate
 
@@ -45,7 +50,7 @@
 # Configuración del haz
 /gun/particle neutron
 /gun/energy 4.2 MeV
-/gun/position 0 0 -4.6 cm
+/gun/position 0 0 0 cm
 /gun/direction 0 0 1
 /gun/number 1
 

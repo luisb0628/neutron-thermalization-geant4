@@ -6,22 +6,27 @@
 /event/verbose 0
 /tracking/verbose 0
 
-/detector/setParaffinX 10 cm
-/detector/setParaffinY 10 cm
-/detector/setParaffinZ 10 cm
-/detector/setLeadZ 1.5 cm
-/ambe/distance 10 cm
+# Misma geometría que vis_video.mac
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
+/detector/setLeadZ 2 cm
+/ambe/distance 0 cm
 /ambe/activity 2.98
 
 /run/initialize
 
-/vis/open OGLSX 1280x720
-/vis/viewer/set/viewpointThetaPhi 70 20
+# Mismo driver, resolución y ángulo que vis_video.mac
+/vis/open OGLSX 2000x2000
+/vis/viewer/set/viewpointThetaPhi 30 20
 /vis/viewer/set/background 0 0 0 1
-/vis/geometry/set/colour Block    0 1.0 1.0 0.6 0.6
-/vis/geometry/set/colour Lead     0 0.6 0.6 0.6 0.8
-/vis/geometry/set/colour Detector 0 1.0 0.55 0.0 1.0
+
+# Mismos colores que vis_video.mac
+/vis/geometry/set/colour Block    0 226 212 183 .3
+/vis/geometry/set/colour Detector 0 28 28 28 1
+/vis/geometry/set/colour Lead     0 0 212 200 .3
 /vis/viewer/set/style surface
+/vis/geometry/set/forceSolid Detector 0
 /vis/scene/create
 /vis/scene/add/volume
 /vis/drawVolume

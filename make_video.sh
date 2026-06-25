@@ -20,7 +20,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD="$ROOT/build"
 PYTHON_SCRIPT="$ROOT/python/accumulate_frames.py"
-PYTHON_ENV="$HOME/mi_entorno/bin/activate"
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 N_FRAMES=120
@@ -83,9 +82,20 @@ sep
 
 [[ -f "$MACRO_PATH" ]]   || die "No se encontró el macro: $MACRO_PATH"
 [[ -f "$PYTHON_SCRIPT" ]] || die "No se encontró: $PYTHON_SCRIPT"
-[[ -f "$PYTHON_ENV" ]]   || die "No se encontró el entorno Python: $PYTHON_ENV"
+command -v python3 >/dev/null 2>&1 || die "python3 no está disponible en el contenedor"
 command -v gs     >/dev/null 2>&1 || die "Ghostscript (gs) no está instalado"
 command -v ffmpeg >/dev/null 2>&1 || die "ffmpeg no está instalado"
+
+# ── Display virtual (Docker/headless) ─────────────────────────────────────────
+if [[ -z "${DISPLAY:-}" ]]; then
+    command -v Xvfb >/dev/null 2>&1 || die "No hay DISPLAY y Xvfb no está instalado (apt-get install xvfb)"
+    Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp &
+    XVFB_PID=$!
+    export DISPLAY=:99
+    sleep 1
+    ok "Xvfb iniciado en :99 (PID $XVFB_PID)"
+    trap 'kill $XVFB_PID 2>/dev/null' EXIT
+fi
 
 # ── PASO 0: (Re)compilar si hay cambios ───────────────────────────────────────
 EXECUTABLE="$BUILD/Neutron_Thermalization"
@@ -175,7 +185,6 @@ fi
 # ── PASO 3: Acumulación con Python ────────────────────────────────────────────
 sep; log "Paso 3 — Acumulación de frames (overlay alpha=$BOX_ALPHA)"
 cd "$BUILD"
-source "$PYTHON_ENV"
 
 BOX_ARG=""
 [[ -f box_frame.png ]] && BOX_ARG="--box box_frame.png --box-alpha $BOX_ALPHA"
