@@ -4,19 +4,19 @@
 #include "G4UImessenger.hh"
 #include "globals.hh"
 
-class PrimaryGeneratorAction;
+class DetectorConstruction;
 class G4UIdirectory;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithADouble;
 
 class SourceMessenger : public G4UImessenger {
 public:
-    SourceMessenger(PrimaryGeneratorAction* source);
+    SourceMessenger(DetectorConstruction* detector);
     ~SourceMessenger() override;
     void SetNewValue(G4UIcommand* command, G4String newValue) override;
 
 private:
-    PrimaryGeneratorAction*      fSource;
+    DetectorConstruction*        fDetector;
     G4UIdirectory*               fAmBeDir;
     G4UIcmdWithADoubleAndUnit*   fDistanceCmd;
     G4UIcmdWithADouble*          fActivityCmd;

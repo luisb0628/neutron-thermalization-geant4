@@ -3,7 +3,12 @@
 #include "G4AnalysisManager.hh"
 #include "G4SystemOfUnits.hh"
 
-RunAction::RunAction() : G4UserRunAction() {}
+RunAction::RunAction() : G4UserRunAction()
+{
+    // En modo MT cada hilo trabajador escribe su propio archivo temporal;
+    // esto le pide al AnalysisManager fusionarlos en uno solo al cerrar.
+    G4AnalysisManager::Instance()->SetNtupleMerging(true);
+}
 RunAction::~RunAction() {}
 
 void RunAction::BeginOfRunAction(const G4Run*)
@@ -21,6 +26,19 @@ void RunAction::BeginOfRunAction(const G4Run*)
     am->CreateNtupleDColumn("DirX");       // col 5: dirección del momento (vector unitario)
     am->CreateNtupleDColumn("DirY");       // col 6
     am->CreateNtupleDColumn("DirZ");       // col 7
+    am->FinishNtuple();
+
+    // Ntuple del espectro justo al salir de las cápsulas de fuente (antes
+    // de atravesar plomo/parafina) — mismo esquema de columnas que arriba
+    am->CreateNtuple("SourceSpectrum", "Espectro de partículas al salir de las cápsulas de fuente");
+    am->CreateNtupleSColumn("Particle");
+    am->CreateNtupleDColumn("KinE_eV");
+    am->CreateNtupleDColumn("PosX_cm");
+    am->CreateNtupleDColumn("PosY_cm");
+    am->CreateNtupleDColumn("PosZ_cm");
+    am->CreateNtupleDColumn("DirX");
+    am->CreateNtupleDColumn("DirY");
+    am->CreateNtupleDColumn("DirZ");
     am->FinishNtuple();
 }
 

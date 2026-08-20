@@ -16,6 +16,7 @@ set(SOURCES
     src/SourceMessenger.cc
     src/RunAction.cc
     src/TransmittedSD.cc
+    src/SourceMonitorSD.cc
     src/EventAction.cc
     src/DetectorMessenger.cc
 )

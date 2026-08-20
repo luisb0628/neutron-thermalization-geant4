@@ -3,8 +3,12 @@
 
 #include "G4VPhysicalVolume.hh"
 #include "G4VUserDetectorConstruction.hh"
+#include "G4ThreeVector.hh"
 #include "globals.hh"
 class DetectorMessenger;
+class SourceMessenger;
+class G4LogicalVolume;
+class G4Material;
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
     DetectorConstruction();
@@ -27,12 +31,41 @@ public:
     G4double GetParaffinZ() const { return fParaffinZ; }
     G4double GetLeadZ()     const { return fLeadZ; }
 
+    // --- Posición de las fuentes (dueño único: la geometría las coloca
+    //     y PrimaryGeneratorAction consulta estos mismos valores) ---
+    void SetSourceDistance(G4double val) { fSourceDistance = val; }
+    void SetCs137Offset(const G4ThreeVector& v) { fCs137Offset = v; }
+    void SetActivity(G4double val) { fActivity = val; }
+
+    G4double GetSourceDistance() const { return fSourceDistance; }
+    const G4ThreeVector& GetCs137Offset() const { return fCs137Offset; }
+    G4double GetActivity() const { return fActivity; }
+
+    // Posiciones reales de emisión (centro de la cavidad activa de cada
+    // cápsula) — usadas tanto para colocar la geometría como por el GPS,
+    // así ambas cosas quedan garantizadas en el mismo punto.
+    G4ThreeVector GetAmBePosition() const;
+    G4ThreeVector GetCs137Position() const;
+
 private:
+    G4LogicalVolume* BuildSealedSource(const G4String& name);
+    G4LogicalVolume* BuildSourceMonitor(const G4String& name, G4LogicalVolume* capsuleLV);
+
     G4double fParaffinX;
     G4double fParaffinY;
     G4double fParaffinZ;
-    G4double fLeadZ;       // media longitud del bloque de plomo en Z
+    G4double fLeadZ;       // media longitud (Z) del bloque de plomo parcial, entre la caja
+                            // blindaje W-acero y la parafina — default 1 cm (2 cm de espesor total)
+
+    G4double fSourceDistance; // offset extra en Z de las fuentes respecto al centro de la
+                              // caja blindaje (0 = centradas en la cavidad, por defecto)
+    G4ThreeVector fCs137Offset; // offset fijo de la fuente Cs-137 respecto a la AmBe
+                                // (por defecto las deja en mitades opuestas del ancho de la caja:
+                                //  AmBe del lado sin plomo, Cs-137 del lado cubierto por el plomo)
+    G4double fActivity;       // en Ci, solo para normalización
+
     DetectorMessenger* fMessenger;
+    SourceMessenger*   fSourceMessenger;
 };
 
 

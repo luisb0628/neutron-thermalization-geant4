@@ -1,4 +1,6 @@
 #include "G4RunManager.hh"
+#include "G4RunManagerFactory.hh"
+#include "G4Threading.hh"
 #include "G4UImanager.hh"
 #include "QGSP_BERT_HP.hh"
 #include "G4VisExecutive.hh"
@@ -13,8 +15,11 @@ int main(int argc, char** argv) {
     G4UIExecutive* ui = nullptr;
     if (argc == 1) ui = new G4UIExecutive(argc, argv);
 
-    // Crear el Run Manager
-    auto* runManager = new G4RunManager();
+    // Crear el Run Manager multihilo (usa todos los núcleos disponibles;
+    // cae a modo serial automáticamente si Geant4 no se compiló con MT)
+    G4RunManager* runManager =
+        G4RunManagerFactory::CreateRunManager(G4RunManagerType::MT, false);
+    runManager->SetNumberOfThreads(G4Threading::G4GetNumberOfCores());
 
     // Construcción del detector
     auto* detector = new DetectorConstruction();

@@ -7,14 +7,14 @@ class DetectorConstruction;
 
 class ActionInitialization : public G4VUserActionInitialization {
 public:
-    ActionInitialization(const DetectorConstruction* detector);
+    ActionInitialization(DetectorConstruction* detector);
     ~ActionInitialization() override;
 
     void BuildForMaster() const override;
     void Build() const override;
 
 private:
-    const DetectorConstruction* fDetector;
+    DetectorConstruction* fDetector;
 };
 
 #endif

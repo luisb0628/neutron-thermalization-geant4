@@ -4,7 +4,7 @@
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
 
-ActionInitialization::ActionInitialization(const DetectorConstruction* detector)
+ActionInitialization::ActionInitialization(DetectorConstruction* detector)
  : fDetector(detector) {}
 
 ActionInitialization::~ActionInitialization() {}

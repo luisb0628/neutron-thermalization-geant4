@@ -1,12 +1,12 @@
 #include "SourceMessenger.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "DetectorConstruction.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
 
-SourceMessenger::SourceMessenger(PrimaryGeneratorAction* source)
- : fSource(source)
+SourceMessenger::SourceMessenger(DetectorConstruction* detector)
+ : fDetector(detector)
 {
     fAmBeDir = new G4UIdirectory("/ambe/");
     fAmBeDir->SetGuidance("Comandos para la fuente AmBe.");
@@ -34,7 +34,7 @@ SourceMessenger::~SourceMessenger()
 void SourceMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
     if (command == fDistanceCmd)
-        fSource->SetSourceDistance(fDistanceCmd->GetNewDoubleValue(newValue));
+        fDetector->SetSourceDistance(fDistanceCmd->GetNewDoubleValue(newValue));
     else if (command == fActivityCmd)
-        fSource->SetActivity(fActivityCmd->GetNewDoubleValue(newValue));
+        fDetector->SetActivity(fActivityCmd->GetNewDoubleValue(newValue));
 }

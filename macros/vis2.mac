@@ -6,7 +6,7 @@
 /detector/setParaffinX 6 cm
 /detector/setParaffinY 6 cm
 /detector/setParaffinZ 4 cm
-/detector/setLeadZ 2 cm
+/detector/setLeadZ 3.5 cm
 
 /run/initialize
 
@@ -19,7 +19,8 @@
 
 /vis/geometry/set/colour Block 0 226 212 183 .3
 /vis/geometry/set/colour Detector 0 28 28 28 1
-/vis/geometry/set/colour Lead 0 0 212 200 .3
+/vis/geometry/set/colour Shield 0 0 212 200 .3
+/vis/geometry/set/colour Lead 0 80 80 90 .5
 /vis/viewer/set/style surface
 /vis/viewer/set/autoRefresh true
 /vis/scene/create

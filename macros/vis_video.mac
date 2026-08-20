@@ -22,7 +22,8 @@
 /vis/viewer/set/viewpointThetaPhi 30 20
 /vis/geometry/set/colour Block 0 226 212 183 .3
 /vis/geometry/set/colour Detector 0 28 28 28 1
-/vis/geometry/set/colour Lead 0 0 212 200 .3
+/vis/geometry/set/colour Shield 0 0 212 200 .3
+/vis/geometry/set/colour Lead 0 80 80 90 .5
 /vis/viewer/set/style wireframe
 /vis/geometry/set/forceSolid Detector 0
 /vis/scene/create

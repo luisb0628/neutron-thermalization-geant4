@@ -33,9 +33,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* detector)
     fParaffinZCmd->SetParameterName("Z", false);
     fParaffinZCmd->SetUnitCategory("Length");
 
-    // --- Comando para espesor del plomo (half-length) ---
+    // --- Comando para espesor (half-length) del bloque de plomo adicional ---
+    // (lado -X, donde está la cápsula de Cs-137; la caja de tungsteno es de tamaño fijo)
     fLeadZCmd = new G4UIcmdWithADoubleAndUnit("/detector/setLeadZ", this);
-    fLeadZCmd->SetGuidance("Define la media longitud en Z del bloque de plomo (espesor_total/2).");
+    fLeadZCmd->SetGuidance("Define la media longitud en Z del bloque de plomo adicional (espesor_total/2), ubicado entre la caja de tungsteno y la parafina, del lado de la fuente Cs-137.");
     fLeadZCmd->SetParameterName("LeadZ", false);
     fLeadZCmd->SetDefaultUnit("cm");
     fLeadZCmd->SetUnitCategory("Length");

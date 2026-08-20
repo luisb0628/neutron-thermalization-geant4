@@ -16,7 +16,7 @@
 #   Area fija: 20x20 cm
 #   Espesor inicial: 3 cm → setLeadZ = 1.5 cm
 # ----------------------------------------------------------------
-/detector/setLeadZ 0.00000001 cm
+/detector/setLeadZ 8 cm
 
 # ----------------------------------------------------------------
 # Fuente AmBe
@@ -35,4 +35,4 @@
 #   Cada evento = 1 neutrón AmBe (+ gamma 4.44 MeV con P=60%)
 #   Ajusta beamOn según estadística deseada
 # ----------------------------------------------------------------
-/run/beamOn 1000000
+/run/beamOn 10000000

@@ -16,11 +16,13 @@ X_values = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,
 Y_values = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0]
 Z_values = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0]
 
-# Espesor del bloque de plomo (half-length en cm; espesor_total = 2 × valor)
-# Area fija 20x20 cm. Ejemplo: 1.5 cm → bloque de 3 cm de espesor
-LEAD_Z_values = [1.5]  # cm
+# Espesor del bloque de plomo adicional (half-length en cm; espesor_total = 2 × valor)
+# Lado -X (donde está la fuente Cs-137), area fija 16.75x20 cm.
+# La caja de tungsteno (33.5x20x5.4 cm, rotada) es de tamaño fijo, no se barre aquí.
+# Ejemplo: 10 cm → bloque de 20 cm de espesor
+LEAD_Z_values = [10.0]  # cm
 
-# Distancias fuente → cara frontal del PLOMO
+# Distancias fuente → pared interna frontal de la CAJA BLINDAJE
 DIST_values = [0]  # cm
 
 # =============================================================
