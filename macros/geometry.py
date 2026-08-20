@@ -5,28 +5,15 @@ import uproot
 import subprocess
 import time
 
-# --- Puntos a correr: dos sub-mallas (Ancho x Alto x Espesor), en vez del
-# cubo completo 20x20x20 --------------------------------------------------
-#   Malla A: Ancho 1-15 cm x Alto 1-15 cm x Espesor 5-9 cm    (1,125 puntos)
-#   Malla B: Ancho 1-15 cm x Alto 1-15 cm x Espesor 12-15 cm    (900 puntos)
-#   Total: 2,025 puntos (25% del cubo completo)
-# Valores en cm de largo completo, paso 1 cm (mismo grid que resultados_ambe.csv).
-Width_full  = list(range(1, 16))   # 1..15
-Height_full = list(range(1, 16))   # 1..15
-Thick_A     = list(range(5, 10))   # 5..9
-Thick_B     = list(range(12, 16))  # 12..15
+# --- Parámetros del barrido: cubo completo 20x20x20 (8,000 combinaciones) ---
+X_values = np.arange(0.5, 10.1, 0.5)  # cm (half-length)
+Y_values = np.arange(0.5, 10.1, 0.5)  # cm (half-length)
+Z_values = np.arange(0.5, 10.1, 0.5)  # cm (half-length, espesor)
 
-combos_cm = ([(w, h, t) for w in Width_full for h in Height_full for t in Thick_A] +
-             [(w, h, t) for w in Width_full for h in Height_full for t in Thick_B])
-# half-length (lo que usan los comandos /detector/setParaffin...)
-combos = [(w / 2, h / 2, t / 2) for (w, h, t) in combos_cm]
-n_combos = len(combos)
-
-# --- Parámetros ---
-BEAM_ON  = 1_000_000  # eventos por combo (~1 dia para las 2,025 combinaciones)
-ACTIVITY = 2.98        # Ci (fuente AmBe, solo para normalización)
-LEAD_Z   = 1.5         # cm, half-length del bloque de plomo adicional
-DISTANCE = 0           # cm, fuente -> pared interna frontal de la caja blindaje
+BEAM_ON  = 100000   # disparos por simulación (ver nota de tiempo abajo)
+ACTIVITY = 2.98     # Ci (fuente AmBe, solo para normalización)
+LEAD_Z   = 1.5      # cm, half-length del bloque de plomo adicional
+DISTANCE = 0        # cm, fuente -> pared interna frontal de la caja blindaje
 
 # --- Rutas (relativas a este script, no al cwd desde donde se invoque) ---
 SCRIPT_DIR = os.path.dirname(__file__)
@@ -34,7 +21,10 @@ BUILD_DIR  = os.path.join(SCRIPT_DIR, "../build")
 exe        = os.path.join(BUILD_DIR, "Neutron_Thermalization")
 root_file  = os.path.join(BUILD_DIR, "AmBePhaseSpace.root")
 macro_file = os.path.join(BUILD_DIR, "auto_geometry.mac")
-csv_path   = os.path.join(SCRIPT_DIR, "resultados_submalla.csv")
+csv_path   = os.path.join(SCRIPT_DIR, "resultados_parafina.csv")
+
+combos   = [(x, y, z) for x in X_values for y in Y_values for z in Z_values]
+n_combos = len(combos)
 
 # --- Reanudar: si ya hay un CSV de una corrida anterior, no repetir combos ---
 results = []
@@ -47,13 +37,12 @@ if os.path.exists(csv_path):
     print(f"Reanudando desde '{os.path.basename(csv_path)}': "
           f"{len(done_keys)} combinaciones ya hechas, se omiten.")
 
-print(f"Combinaciones totales : {n_combos:,}  "
-      f"(Ancho/Alto 1-15 cm x Espesor 5-9 cm, y x Espesor 12-15 cm)")
+print(f"Combinaciones totales : {n_combos:,}  (cubo completo 20x20x20)")
 print(f"Pendientes            : {n_combos - len(done_keys):,}")
 print(f"Eventos por combo     : {BEAM_ON:,}")
 print("(overhead fijo de arranque de Geant4 es ~3-4s por combo, aparte del "
       "tiempo de simulación — el ETA de abajo ya lo incluye porque se mide en vivo. "
-      "Con 1,000,000 eventos/combo, esta submalla toma ~1 dia.)\n")
+      "Con 100,000 eventos/combo, el barrido completo toma ~14 horas.)\n")
 
 
 def format_hms(seconds):
@@ -122,6 +111,9 @@ for (X, Y, Z) in combos:
         energy   = arr["KinE_eV"]          # eV
         total_detected = len(particle)
 
+        # PhaseSpace trae todas las partículas que llegan al detector
+        # (neutron, gamma, e-, ...) — la clasificación térmica es solo
+        # sobre los neutrones.
         en = energy[particle == "neutron"]
         thermal    = int(np.sum(en <= 0.025))                    # E <= 0.025 eV
         epithermal = int(np.sum((en > 0.025) & (en < 0.5e6)))    # 0.025 eV - 0.5 MeV

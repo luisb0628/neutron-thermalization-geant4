@@ -1,6 +1,11 @@
 # Compilación
 build/
 
+# Salidas de barridos parametricos (geometry.py, ambe_scan.py, etc.)
+macros/resultados_*.csv
+macros/auto*.mac
+*.root
+
 # Análisis
 Analysis/
 
