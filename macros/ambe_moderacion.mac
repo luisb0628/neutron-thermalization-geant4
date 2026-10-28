@@ -31,6 +31,10 @@
 /moderation/enable 1
 /moderation/maxStepTracks 100000
 
+# Numero de hilos: por defecto se usan todos los nucleos del equipo.
+# Descomentar para fijarlo; debe ir antes de /run/initialize.
+#/run/numberOfThreads 4
+
 /run/initialize
 
 /run/beamOn 10000000

@@ -15,6 +15,10 @@
 #/vis/enable
 
 # Inicialización del run
+# Numero de hilos: por defecto se usan todos los nucleos del equipo.
+# Descomentar para fijarlo; debe ir antes de /run/initialize.
+#/run/numberOfThreads 4
+
 /run/initialize
 
 # Simulación

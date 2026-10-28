@@ -64,6 +64,27 @@ make -j$(nproc)
 
 La etapa 2 lee los `.root` directamente de `build/`, con una ruta relativa fija (`../../neutron-thermalization-geant4/build/`). Por eso los tres repositorios deben estar uno al lado del otro.
 
+### Número de hilos
+
+El programa corre en varios hilos y, por defecto, usa todos los núcleos del equipo (`SetNumberOfThreads(G4GetNumberOfCores())` en `main.cc`). Hay dos formas de cambiarlo sin tocar el código:
+
+- **En la macro**, antes de `/run/initialize`. Todas las macros de corrida traen la línea comentada:
+
+  ```
+  /run/numberOfThreads 4
+  /run/initialize
+  ```
+
+- **Con una variable de entorno**, que se impone a lo que digan el código y la macro:
+
+  ```bash
+  G4FORCENUMBEROFTHREADS=4 ./Neutron_Thermalization ../macros/ambe_only.mac
+  # dentro de Docker:
+  docker exec -e G4FORCENUMBEROFTHREADS=4 <contenedor> bash -lc "cd ... && ./Neutron_Thermalization ../macros/ambe_only.mac"
+  ```
+
+Para limitar además **qué** núcleos se usan, en Linux se puede lanzar con `taskset -c 0-3 ./Neutron_Thermalization ...` o crear el contenedor con `--cpuset-cpus="0-3"`. En ese caso hay que fijar también el número de hilos, porque Geant4 cuenta los núcleos de toda la máquina y lanzaría más hilos que núcleos asignados. Si se corren varias simulaciones a la vez, conviene repartir los núcleos entre ellas. Con otro número de hilos cambian las secuencias de números aleatorios: los resultados son estadísticamente equivalentes, pero no idénticos evento a evento.
+
 ---
 
 ## Macros
