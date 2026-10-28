@@ -1,241 +1,129 @@
-# Termalización de Neutrones en Parafina con Fuentes AmBe + Cs-137 (Geant4)
+# Termalización de neutrones de AmBe en parafina (Geant4)
 
-Simulación Monte Carlo de la **termalización de neutrones en parafina** usando **Geant4**, modelando la cabeza sensora de un **densímetro nuclear tipo Troxler**: una fuente de neutrones **AmBe** (humedad) y una fuente gamma **Cs-137** (densidad), ambas alojadas dentro de una caja blindaje de tungsteno-acero, irradiando un moderador de parafina hacia un detector.
+Simulación Monte Carlo en **Geant4** de la moderación de los neutrones de una fuente de **²⁴¹Am-Be** en un bloque de **parafina**, con la geometría de la cabeza de un densímetro nuclear **Troxler 3440**: la fuente de neutrones (AmBe) y la de densidad (¹³⁷Cs) dentro de una caja de blindaje de tungsteno-acero, un bloque de plomo parcial, la parafina y un detector de aire. El programa guarda el *phase space* de las partículas que llegan al detector y, si se pide, cada colisión del neutrón dentro de la parafina.
 
-Este proyecto es la **primera etapa** de una cadena de simulación:
+Es la **primera etapa** de una cadena de tres simulaciones:
 
-1. **Neutron_Thermalization** (este repo) — genera `AmBePhaseSpace.root`
-2. **Film_graphene** — captura neutrones en el film grafeno/Kapton
-3. **Scintillator_Sipm** — detecta partículas secundarias en un centellador + SiPM
-
----
-
-## Ramas del repositorio
-
-| Rama | Descripción |
-|------|-------------|
-| `main` | Versión base: fuente monoenergética 4.2 MeV |
-| `ambe_source` | Fuente AmBe realista con phase space completo |
-| `Troxler-3440` | **Rama actual**: geometría de densímetro Troxler (caja W-acero + plomo parcial + AmBe/Cs-137) |
+| Etapa | Repositorio | Entrada | Salida |
+|---|---|---|---|
+| 1. Termalización | **neutron-thermalization-geant4** (este) | — | `AmBePhaseSpace.root`, `Cs137PhaseSpace.root` |
+| 2. Captura | [neutron-capture-graphene-boron-geant4](https://github.com/luisb0628/neutron-capture-graphene-boron-geant4) | phase space de la etapa 1 | `output.root` |
+| 3. Centelleador | [Scintillator_Sipm](https://github.com/luisb0628/Scintillator_Sipm) | `output.root` de la etapa 2 | `output.root` |
 
 ---
 
-## Descripción física
+## Física y geometría
 
-### Fuente AmBe (neutrones)
+**Lista de física:** `QGSP_BERT_HP` (neutrones de alta precisión por debajo de 20 MeV), la misma en las tres etapas.
 
-La fuente **Americio-Berilio (AmBe)** produce neutrones por la reacción ⁹Be(α,n)¹²C, repartidos en 3 canales según el estado final del ¹²C (fracciones de De Guarrini & Malaroda 1971 / Geiger & Van der Zwan 1975):
+**Fuente de ²⁴¹Am-Be.** Emite solo neutrones, isótropos y puntuales, desde el centro de la cavidad activa de su cápsula de acero. La energía se muestrea de tres canales de la reacción ⁹Be(α,n)¹²C:
 
-| Canal | Fracción | Descripción |
-|-------|----------|-------------|
-| `nGND` | 31.6 % | Transición al estado fundamental del ¹²C |
-| `n1st` | 46.5 % | Transición al 1er estado excitado — **acompañado del gamma de 4.438 MeV** (Doppler-ensanchado, σ/E≈0.9%) |
-| `n2nd` | 21.9 % | Canal blando, incluye breakup en 3 alfas por encima del umbral (~7.65 MeV, estado de Hoyle) |
+| Canal | Fracción | Estado final del ¹²C |
+|---|---|---|
+| `nGND` | 31,6 % | fundamental |
+| `n1st` | 46,5 % | primer excitado (4,438 MeV) |
+| `n2nd` | 21,9 % | segundo excitado y ruptura en tres α |
 
-- **Espectro neutrónico:** continuo, cada canal con su propia forma (ver `PrimaryGeneratorAction::BuildSpectrum_*`, actualmente formas aproximadas — placeholder pendiente de reemplazar por valores digitalizados)
-- **Actividad:** configurable vía `/ambe/activity` (Ci) — usada para normalización de tasas, no cambia la física del generador
-- **Emisión:** isotrópica (4π sr), puntual, dentro de una cápsula sellada de doble encapsulado en acero inoxidable
+El espectro resultante cubre de 0 a 8 MeV y aproxima el de la norma ISO 8529-1. El γ de 4,438 MeV del canal `n1st` **no se emite**: no aparece en el espectro medido, porque el blindaje del densímetro lo atenúa.
 
-### Fuente Cs-137 (calibración, gamma)
+**Fuente de ¹³⁷Cs.** Un γ de 0,661657 MeV por evento, isótropo, desde una cápsula igual a la del AmBe y ubicada en la mitad de la caja cubierta por el plomo.
 
-Gamma monoenergético de **661.657 keV** (transición del Ba-137m), emisión isotrópica desde una cápsula sellada idéntica en construcción a la de AmBe, ubicada en la mitad de la caja blindaje cubierta por el plomo.
+**Las dos fuentes se simulan por separado** (`/source/mode`). El ¹³⁷Cs emite muchos más fotones por segundo que el AmBe, así que se corren aparte y se combinan después en el análisis, con un peso según la actividad de cada una.
 
-> ⚠️ **Limitación conocida:** en el generador actual, el gamma de Cs-137 se emite **en cada evento**, junto con el neutrón de AmBe — esto simplifica el código pero no representa la física real (son decaimientos radiactivos independientes, con tasas de emisión muy distintas). Si necesitás resultados temporales realistas (coincidencias, tasa de cuentas), hay que desacoplar ambas fuentes — ver `PrimaryGeneratorAction::GeneratePrimaries`.
-
-### Moderador
-
-Bloque de parafina (`ρ = 0.93 g/cm³`, C:H = 1:2) configurable en dimensiones desde macro.
-
-### Blindaje
-
-- **Caja blindaje** de aleación tungsteno-acero (60/40 en masa, ρ≈12.33 g/cm³ por regla de mezcla), hueca (pared 5 mm), dimensiones fijas **Ancho(X)=33.5 cm × Alto(Y)=20 cm × Espesor(Z)=5.4 cm**. Ambas fuentes selladas están alojadas en su cavidad de aire: AmBe centrada en el ancho, Cs-137 desplazada hacia la mitad cubierta por el plomo.
-- **Bloque de plomo parcial**, entre la caja blindaje y la parafina: cubre solo la **mitad del ancho** de la caja (16.75 cm de los 33.5 cm), del lado de la fuente Cs-137 — el lado de AmBe queda sin plomo delante (solo aire). Espesor configurable vía `/detector/setLeadZ` (half-length; por defecto 1 cm → 2 cm de espesor total).
-
-### Detector
-
-Cilindro de aire (placeholder de grafeno dopado con boro):
-- Diámetro: 2.6 cm, Espesor: 1 mm
-- Registra todas las partículas que llegan con su phase space completo (tipo, energía, posición, dirección)
-
----
-
-## Contenido del repositorio
-
-```
-.
-├── CMakeLists.txt
-├── main.cc
-├── make_video.sh                    # Pipeline simulación → video MP4 (una geometría)
-├── make_all_videos.sh               # Pipeline para las 5 geometrías predefinidas
-├── guia_video.pdf                   # Guía para generar los videos de visualización
-├── include/
-│   ├── DetectorConstruction.hh      # Mundo, parafina configurable, caja W-acero + plomo parcial, fuentes, detector
-│   ├── DetectorMessenger.hh         # Comandos /detector/setParaffinX/Y/Z, /detector/setLeadZ
-│   ├── PrimaryGeneratorAction.hh    # Fuentes AmBe (3 canales) + Cs-137, registro en SourceSpectrum
-│   ├── SourceMessenger.hh           # Comandos /ambe/distance y /ambe/activity
-│   ├── SourceMonitorSD.hh           # DESACTIVADO (ver nota abajo) — reemplazado por registro en generación
-│   ├── TransmittedSD.hh             # Sensible del detector -> ntuple PhaseSpace
-│   ├── RunAction.hh
-│   ├── EventAction.hh               # Barra de progreso con ETA durante la corrida
-│   └── ActionInitialization.hh
-├── src/                             # Implementación de cada clase de include/
-├── macros/
-│   ├── ambe_run.mac                 # Macro principal (batch, ambas fuentes)
-│   ├── geometry.py                  # Barrido paramétrico standalone (progreso, ETA, reanudar)
-│   ├── vis1.mac / vis2.mac          # Visualización
-│   ├── vis_video.mac                # Exporta frames EPS por evento
-│   ├── vis_box_frame.mac            # Frame de geometría base para overlay de video
-│   ├── vis_box_frame_geo1.mac  …    # Frames de geometría para cada configuración
-│   ├── vis_video_geo1.mac  …        # Macros de video para cada configuración
-│   └── vis_rotate_frame.mac
-└── python/
-    ├── ambe_scan.py                 # Barrido paramétrico de geometría y distancia
-    ├── accumulate_frames.py         # Acumula frames para el video
-    ├── Termalizacion.csv            # Resultados de un barrido previo
-    ├── analisis_ambe.ipynb          # Análisis de geometría (heatmaps, 3D, energías)
-    └── analisis_distancia.ipynb     # Análisis vs distancia fuente–parafina
-```
-
-**Nota sobre `SourceMonitorSD`:** originalmente registraba el espectro "de fuente" contando cruces de partículas hacia un volumen que envuelve cada cápsula — pero eso duplicaba partículas que retrodispersaban y volvían a cruzar, con energía ya alterada por esa dispersión. Se reemplazó por `PrimaryGeneratorAction::RecordSourceSpectrum`, que registra cada partícula primaria **exactamente una vez**, con la energía/dirección tal como fue generada. La clase sigue en el código (no-operativa) para no tocar la geometría de los volúmenes monitor.
+**Geometría:**
+- Caja de blindaje hueca de aleación tungsteno-acero (60/40 en masa, 12,33 g/cm³), de (33,5 × 20 × 5,4) cm³ con pared de 5 mm.
+- Bloque de plomo entre la caja y la parafina que cubre solo la mitad del ancho, del lado del ¹³⁷Cs. El eje del AmBe coincide con el borde del plomo, así que sus neutrones salen por el lado libre.
+- Parafina CH₂ de 0,93 g/cm³ con dimensiones configurables.
+- Detector: cilindro de aire de 1,3 cm de radio detrás de la parafina, que registra cada partícula que lo cruza.
 
 ---
 
 ## Requisitos
 
-- **Geant4** ≥ 10.7 compilado con `ui_all`, `vis_all`, `analysis` y física HP
-- **CMake** ≥ 3.16, **C++17**
-- **Python 3** con: `uproot`, `numpy`, `pandas`, `matplotlib`, `jupyter`
-- **Ghostscript** (`gs`) y **ffmpeg** — solo para generación de video
+- **Geant4 11** con datos de neutrones HP, `analysis` y, para visualizar, `ui_all` y `vis_all`.
+- **CMake** ≥ 3.16 y un compilador **C++17**.
+- **Python 3** con `uproot`, `numpy` y `pandas`, para leer las salidas y correr los barridos.
+- Opcional, para los videos: **Ghostscript** (`gs`) y **ffmpeg**.
+
+Las corridas de la tesis se hicieron en Docker con la imagen `luisb28/geant4-clase:11.4-python`, montando la carpeta que contiene los tres repositorios en `/workspace`.
 
 ---
 
-## Compilación
+## Compilación y ejecución
 
 ```bash
-source /path/to/geant4/install/bin/geant4.sh
+source /ruta/a/geant4/bin/geant4.sh
 mkdir -p build && cd build
 cmake ..
 make -j$(nproc)
+
+./Neutron_Thermalization ../macros/ambe_only.mac     # neutrones del AmBe   -> AmBePhaseSpace.root
+./Neutron_Thermalization ../macros/cs137_only.mac    # gammas del 137Cs     -> Cs137PhaseSpace.root
+./Neutron_Thermalization                             # modo interactivo con visualización
 ```
+
+La etapa 2 lee los `.root` directamente de `build/`, con una ruta relativa fija (`../../neutron-thermalization-geant4/build/`). Por eso los tres repositorios deben estar uno al lado del otro.
 
 ---
 
-## Ejecución
+## Macros
 
-### Modo batch (recomendado)
+| Macro | Qué corre |
+|---|---|
+| `macros/ambe_only.mac` | Solo AmBe, 1×10⁷ neutrones, geometría de referencia |
+| `macros/cs137_only.mac` | Solo ¹³⁷Cs, 5×10⁶ gammas, misma geometría |
+| `macros/ambe_moderacion.mac` | Solo AmBe con el registro de la moderación activado (`ModerationSummary` y `ModerationSteps`) |
+| `macros/ambe_run.mac` | Las dos fuentes en el mismo evento (`/source/mode Both`), 1×10⁶ eventos |
+| `macros/run1.mac`, `vis2.mac`, `vis_*.mac` | Pruebas y visualización |
+| `macros/geometry.py` | Barrido de las dimensiones de la parafina, con progreso y reanudación |
 
-```bash
-cd build
-./Neutron_Thermalization ../macros/ambe_run.mac
-```
+Las macros usan una parafina de (12 × 12 × 8) cm³ (half-lengths 6, 6 y 4 cm) y un plomo de 10 cm (`/detector/setLeadZ 5 cm`). La configuración final de la tesis usa la misma parafina con un plomo de **5 cm** (`/detector/setLeadZ 2.5 cm`).
 
-Genera `AmBePhaseSpace.root` en `build/`.
+### Comandos
 
-### Modo interactivo
-
-```bash
-cd build
-./Neutron_Thermalization
-```
-
----
-
-## Comandos del macro
-
-```bash
-# Geometría de la parafina (half-lengths)
-/detector/setParaffinX 10 cm
-/detector/setParaffinY 10 cm
-/detector/setParaffinZ 10 cm
-
-# Espesor del plomo parcial (half-length; espesor_total = 2x valor)
-/detector/setLeadZ 1 cm
-
-# Fuentes AmBe + Cs-137 (comparten distancia/actividad de normalización)
-/ambe/distance 0 cm       # offset extra en Z respecto al centro de la caja blindaje
-/ambe/activity 2.98       # actividad en Ci (solo para normalización)
-
-/run/initialize
-/run/beamOn 500000
-```
+| Comando | Descripción |
+|---|---|
+| `/detector/setParaffinX`, `Y`, `Z` | Half-length de la parafina en cada eje (Z es el espesor, en la dirección del flujo) |
+| `/detector/setLeadZ` | Half-length del plomo en Z (espesor total = 2 × valor) |
+| `/source/mode AmBe \| Cs137 \| Both` | Fuente(s) que se generan; define también el nombre del archivo de salida |
+| `/ambe/distance` | Corrimiento de las fuentes respecto a la cara frontal del plomo |
+| `/ambe/activity` | Actividad en Ci, solo para normalizar; no cambia la física |
+| `/ambe/gammaYield` | Se conserva por compatibilidad, pero **no tiene efecto**: el generador ya no emite el γ de 4,438 MeV |
+| `/moderation/enable 0 \| 1` | Guarda o no las tablas de moderación |
+| `/moderation/maxStepTracks N` | Número de neutrones cuyas colisiones se guardan una por una |
 
 ---
 
 ## Salida
 
-Archivo ROOT: `AmBePhaseSpace.root`, con **dos** ntuples (mismo esquema de columnas):
+El nombre del archivo depende de `/source/mode`: `AmBePhaseSpace.root`, `Cs137PhaseSpace.root` o `AmBeCs137PhaseSpace.root`.
 
-| Columna | Tipo | Descripción |
-|---------|------|-------------|
-| `Particle` | string | Nombre Geant4 (`neutron`, `gamma`, `e-`, …) |
-| `KinE_eV` | double | Energía cinética en eV |
-| `PosX_cm` | double | Posición X en cm |
-| `PosY_cm` | double | Posición Y en cm |
-| `PosZ_cm` | double | Posición Z en cm |
-| `DirX` | double | Dirección X (unitario) |
-| `DirY` | double | Dirección Y |
-| `DirZ` | double | Dirección Z |
-
-- **`PhaseSpace`** — partículas que llegan al detector (todas, después de moderador/blindaje). Es el **input de phase space** para Film_graphene.
-- **`SourceSpectrum`** — partículas primarias tal como las emite el generador (antes de cualquier transporte), una fila exacta por partícula — ver nota sobre `SourceMonitorSD` arriba.
-
----
-
-## Barrido paramétrico
-
-Dos scripts equivalentes, con barra de progreso, ETA en vivo, reanudar sin repetir combinaciones, y guardado incremental:
-
-```bash
-python macros/geometry.py       # standalone, corre desde macros/
-python python/ambe_scan.py      # variante con barrido de plomo y distancia también
-```
-
-Genera:
-- Un CSV de resultados por configuración (nombre según el script)
-- Un `.root` por configuración en `build/`
-
----
-
-## Generación de video
-
-```bash
-# Una geometría
-./make_video.sh -n 120 -f 60 -o video_termalizacion.mp4
-
-# Las 5 geometrías predefinidas
-./make_all_videos.sh
-```
-
-Consulta `guia_video.pdf` para instrucciones detalladas.
+| Tabla | Contenido |
+|---|---|
+| `PhaseSpace` | Cada partícula que llega al detector: `Particle`, `KinE_eV`, `PosX/Y/Z_cm`, `DirX/Y/Z`. Es la entrada de la etapa 2. |
+| `SourceSpectrum` | Cada primaria tal como sale del generador, una fila por partícula (mismas columnas). |
+| `ModerationSummary` | Una fila por neutrón que entra a la parafina: energía inicial y de entrada, colisiones elásticas con H y C, inelásticas y capturas, recorrido, tiempo y número de colisiones hasta 0,5 eV y hasta 0,025 eV, energía, volumen y proceso finales. |
+| `ModerationSteps` | Una fila por colisión del neutrón en la parafina: proceso, núcleo blanco (Z, A), energía antes y después, tiempo, longitud del paso, posición y ángulo. |
 
 ---
 
 ## Estructura del código
 
 | Clase | Responsabilidad |
-|-------|----------------|
-| `DetectorConstruction` | Mundo, parafina configurable, caja blindaje W-acero + plomo parcial, cápsulas de fuente, detector `G4Tubs` |
-| `DetectorMessenger` | Comandos `/detector/setParaffinX/Y/Z`, `/detector/setLeadZ` |
-| `PrimaryGeneratorAction` | GPS con 3 canales AmBe + gamma correlacionado 4.438 MeV + Cs-137; registra `SourceSpectrum` en generación |
-| `SourceMessenger` | Comandos `/ambe/distance` y `/ambe/activity` |
-| `SourceMonitorSD` | Desactivado (ver nota arriba) |
-| `TransmittedSD` | Registra todas las partículas del detector con phase space completo |
-| `EventAction` | Barra de progreso con ETA durante la corrida |
-| `RunAction` | Abre/cierra ROOT, crea ntuples `PhaseSpace` y `SourceSpectrum` |
+|---|---|
+| `DetectorConstruction` / `DetectorMessenger` | Mundo, caja de blindaje, plomo parcial, cápsulas, parafina y detector; comandos `/detector/` |
+| `PrimaryGeneratorAction` | Fuentes AmBe (tres canales) y ¹³⁷Cs; llena `SourceSpectrum` al generar |
+| `SourceMode` / `GeneratorMessenger` | Elección de la fuente y del nombre de salida (`/source/mode`) |
+| `SourceMessenger` | Comandos `/ambe/` |
+| `ModerationConfig` / `SteppingAction` | Registro de la moderación en la parafina (`/moderation/`) |
+| `TransmittedSD` | Detector sensible que llena `PhaseSpace` |
+| `RunAction` / `EventAction` | Archivo ROOT, tablas y barra de progreso |
+| `SourceMonitorSD` | Sin uso: se reemplazó por el registro de `SourceSpectrum` en la generación, que no cuenta dos veces las partículas retrodispersadas |
+
+**Otros archivos:** `python/ambe_scan.py` (barrido de geometría y distancia), `python/accumulate_frames.py` y `make_video.sh` (video de la simulación, ver `guia_video.pdf`).
 
 ---
 
-## Próximos pasos
+## Autor
 
-- [ ] Desacoplar la emisión de Cs-137 de AmBe (son fuentes independientes, no deberían coincidir en cada evento)
-- [ ] Reemplazar los espectros AmBe placeholder por valores digitalizados de literatura
-- [ ] Biasing angular para mejorar eficiencia estadística
-- [ ] Modelo geométrico de la cápsula AmBe real
-- [ ] Comparación con datos experimentales
-
----
-
-## Contacto
-
-Proyecto desarrollado por **Luis Beltrán**
-Maestría en Ingeniería Física — UAN
+**Luis Beltrán** — Maestría en Ingeniería Física, Universidad Antonio Nariño (UAN).
