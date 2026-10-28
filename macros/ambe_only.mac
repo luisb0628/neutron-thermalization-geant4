@@ -1,0 +1,52 @@
+# ambe_only.mac — Simulación de termalización, SOLO fuente AmBe (neutrones)
+#
+# Complemento de cs137_only.mac: las dos fuentes se simulan por separado
+# porque el Cs-137 produce muchos más fotones por evento que la cadena de
+# neutrones del AmBe, así que mezclarlas 1 evento = 1 neutrón + 1 gamma no
+# refleja la estadística real de cada una. Los .root de ambas corridas se
+# combinan después en el análisis, no aquí.
+/control/verbose 0
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+# ----------------------------------------------------------------
+# Geometría de la parafina (half-lengths) — igual que ambe_run.mac
+# ----------------------------------------------------------------
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
+
+# ----------------------------------------------------------------
+# Bloque de plomo (half-length en Z = espesor/2)
+# ----------------------------------------------------------------
+/detector/setLeadZ 5 cm
+
+# ----------------------------------------------------------------
+# Fuente AmBe
+#   distance : distancia fuente → cara frontal del PLOMO
+#   activity : en Ci (solo para normalización en el reporte)
+# ----------------------------------------------------------------
+/ambe/distance 0 cm
+/ambe/activity 0.03
+
+# Solo AmBe: no se genera el gamma de Cs-137 en este evento.
+/source/mode AmBe
+
+# ----------------------------------------------------------------
+# Inicialización
+# ----------------------------------------------------------------
+/run/initialize
+
+# ----------------------------------------------------------------
+# Simulación
+#   Cada evento = 1 neutrón AmBe (nGND/n1st/n2nd, sin el gamma de 4.438 MeV
+#   del carbono: no se observa en el espectro experimental)
+#   Salida: AmBePhaseSpace.root
+#
+#   10M eventos para buena estadistica (mismo orden que la corrida de
+#   referencia anterior, ~96 MB de salida, ~7 min en 12 nucleos). El peso
+#   fisico real frente al Cs-137 se aplica despues en el analisis, no aqui
+#   -- ver cs137_only.mac y Termalizacion_AmBe_analisis.ipynb, Parte 2.
+# ----------------------------------------------------------------
+/run/beamOn 10000000

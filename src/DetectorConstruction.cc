@@ -41,7 +41,7 @@ namespace {
     // Cubre solo la MITAD del ancho (X) de la caja — el lado donde está la
     // fuente Cs-137 — y el alto (Y) completo. El lado sin plomo (AmBe) queda
     // como un hueco de aire del mismo espesor.
-    constexpr G4double kLeadHalfX = kShieldHalfX / 2.;  // 8.375 cm -> 16.75 cm de ancho (mitad de 33.5 cm)
+    constexpr G4double kLeadHalfX = kShieldHalfX / 1.5;  // 8.375 cm -> 16.75 cm de ancho (mitad de 33.5 cm)
     constexpr G4double kLeadHalfY = kShieldHalfY;       // 10 cm -> 20 cm (igual que la caja)
 }
 

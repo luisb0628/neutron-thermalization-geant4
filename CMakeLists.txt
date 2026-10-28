@@ -14,11 +14,15 @@ set(SOURCES
     src/DetectorConstruction.cc
     src/PrimaryGeneratorAction.cc
     src/SourceMessenger.cc
+    src/GeneratorMessenger.cc
+    src/SourceMode.cc
     src/RunAction.cc
     src/TransmittedSD.cc
     src/SourceMonitorSD.cc
     src/EventAction.cc
     src/DetectorMessenger.cc
+    src/SteppingAction.cc
+    src/ModerationConfig.cc
 )
 
 # --- Ejecutable principal ---

@@ -1,4 +1,11 @@
-# ambe_run.mac — Simulación de termalización con fuente AmBe
+# ambe_run.mac — Simulación de termalización con AmBe + Cs-137 juntas (legacy)
+#
+# OBSOLETO para análisis: ahora se recomienda correr ambe_only.mac y
+# cs137_only.mac por separado (el Cs-137 produce muchos más fotones por
+# evento que la cadena de neutrones del AmBe, así que mezclarlas 1 evento =
+# 1 neutrón + 1 gamma no da la estadística real de cada fuente) y combinar
+# los dos .root resultantes en el análisis. Este macro se deja solo como
+# referencia del modo "Both" (/source/mode Both, el default).
 /control/verbose 0
 /run/verbose 1
 /event/verbose 0
@@ -7,16 +14,16 @@
 # ----------------------------------------------------------------
 # Geometría de la parafina (half-lengths)
 # ----------------------------------------------------------------
-/detector/setParaffinX 7 cm
-/detector/setParaffinY 7 cm
-/detector/setParaffinZ 4.5 cm
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
 
 # ----------------------------------------------------------------
 # Bloque de plomo (half-length en Z = espesor/2)
 #   Area fija: 20x20 cm
 #   Espesor inicial: 3 cm → setLeadZ = 1.5 cm
 # ----------------------------------------------------------------
-/detector/setLeadZ 8 cm
+/detector/setLeadZ 5 cm
 
 # ----------------------------------------------------------------
 # Fuente AmBe
@@ -25,6 +32,8 @@
 # ----------------------------------------------------------------
 /ambe/distance 0 cm
 /ambe/activity 0.03
+
+/source/mode Both
 # ----------------------------------------------------------------
 # Inicialización
 # ----------------------------------------------------------------
@@ -35,4 +44,4 @@
 #   Cada evento = 1 neutrón AmBe (+ gamma 4.44 MeV con P=60%)
 #   Ajusta beamOn según estadística deseada
 # ----------------------------------------------------------------
-/run/beamOn 10000000
+/run/beamOn 1000000

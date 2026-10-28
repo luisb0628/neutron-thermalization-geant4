@@ -37,6 +37,13 @@ public:
     void SetCs137Offset(const G4ThreeVector& v) { fCs137Offset = v; }
     void SetActivity(G4double val) { fActivity = val; }
 
+    // Factor de escala (0-1) del gamma de 4.438 MeV coincidente con el canal
+    // n1st (ver PrimaryGeneratorAction::EmitCoincidentGamma). 1 = literatura
+    // (46.5% de los eventos AmBe), 0 = desactivado. No afecta las fracciones
+    // nGND/n1st/n2nd del espectro de neutrones, solo si el gamma se emite.
+    void SetGammaYieldFactor(G4double val) { fGammaYieldFactor = val; }
+    G4double GetGammaYieldFactor() const { return fGammaYieldFactor; }
+
     G4double GetSourceDistance() const { return fSourceDistance; }
     const G4ThreeVector& GetCs137Offset() const { return fCs137Offset; }
     G4double GetActivity() const { return fActivity; }
@@ -63,6 +70,7 @@ private:
                                 // (por defecto las deja en mitades opuestas del ancho de la caja:
                                 //  AmBe del lado sin plomo, Cs-137 del lado cubierto por el plomo)
     G4double fActivity;       // en Ci, solo para normalización
+    G4double fGammaYieldFactor = 1.0; // escala (0-1) del gamma 4.438 MeV coincidente con n1st
 
     DetectorMessenger* fMessenger;
     SourceMessenger*   fSourceMessenger;

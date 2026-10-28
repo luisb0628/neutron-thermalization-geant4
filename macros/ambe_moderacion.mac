@@ -1,0 +1,36 @@
+# ambe_moderacion.mac — Igual que ambe_only.mac (misma geometria y fuente AmBe),
+# pero con el registro paso a paso de la moderacion activado (SteppingAction):
+#   - ModerationSummary: una fila por neutron primario que llega a la parafina
+#   - ModerationSteps  : cada colision dentro de la parafina (energia antes y
+#                        despues, nucleo blanco, tiempo, recorrido, posicion y
+#                        coseno del angulo de dispersion) para los primeros
+#                        /moderation/maxStepTracks neutrones
+# Sirve para contrastar la moderacion simulada con la teoria (decremento
+# logaritmico medio de energia, numero de colisiones, tiempo, edad de Fermi).
+/control/verbose 0
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+# ----------------------------------------------------------------
+# Geometría de la parafina (half-lengths) — igual que ambe_only.mac
+# ----------------------------------------------------------------
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
+
+# Bloque de plomo (half-length en Z = espesor/2)
+/detector/setLeadZ 5 cm
+
+# Fuente AmBe
+/ambe/distance 0 cm
+/ambe/activity 0.03
+/source/mode AmBe
+
+# Registro de la moderacion
+/moderation/enable 1
+/moderation/maxStepTracks 100000
+
+/run/initialize
+
+/run/beamOn 10000000

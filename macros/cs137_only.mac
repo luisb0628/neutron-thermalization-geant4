@@ -1,0 +1,54 @@
+# cs137_only.mac — Simulación de termalización, SOLO fuente Cs-137 (gammas)
+#
+# Complemento de ambe_only.mac. Mismo comentario: se simulan por separado
+# porque el Cs-137 produce muchos más fotones por evento que la cadena de
+# neutrones del AmBe. Ajusta /run/beamOn por separado en cada macro según la
+# estadística real que quieras para cada fuente antes de combinar los .root
+# en el análisis.
+/control/verbose 0
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+# ----------------------------------------------------------------
+# Geometría de la parafina (half-lengths) — igual que ambe_run.mac
+# ----------------------------------------------------------------
+/detector/setParaffinX 6 cm
+/detector/setParaffinY 6 cm
+/detector/setParaffinZ 4 cm
+
+# ----------------------------------------------------------------
+# Bloque de plomo (half-length en Z = espesor/2)
+# ----------------------------------------------------------------
+/detector/setLeadZ 5 cm
+
+# ----------------------------------------------------------------
+# Posición de referencia (la fuente Cs-137 se ubica con el offset fijo de
+# DetectorConstruction respecto a esta posición de AmBe; /ambe/activity no
+# aplica al Cs-137, se deja el valor por defecto sin efecto en este modo)
+# ----------------------------------------------------------------
+/ambe/distance 0 cm
+
+# Solo Cs-137: no se genera ningún neutrón AmBe en este evento.
+/source/mode Cs137
+
+# ----------------------------------------------------------------
+# Inicialización
+# ----------------------------------------------------------------
+/run/initialize
+
+# ----------------------------------------------------------------
+# Simulación
+#   Cada evento = 1 gamma de 661.657 keV (Cs-137)
+#   Salida: Cs137PhaseSpace.root
+#
+#   OJO: este numero de beamOn NO intenta igualar la proporcion real entre
+#   fuentes (40 mCi AmBe vs 8 mCi Cs-137 da ~2863 gammas de Cs-137 por cada
+#   neutron de AmBe emitido en el mismo tiempo real -- reproducir eso aqui
+#   significaria simular ~227 mil millones de gammas, inviable). En cambio,
+#   cada fuente se simula con suficientes primarios para tener buena
+#   estadistica en SU PROPIO espectro, y el peso fisico real (tasa real x
+#   tiempo real / N simulados) se aplica despues al combinar los dos .root
+#   en el analisis -- ver Termalizacion_AmBe_analisis.ipynb, Parte 2.
+# ----------------------------------------------------------------
+/run/beamOn 5000000

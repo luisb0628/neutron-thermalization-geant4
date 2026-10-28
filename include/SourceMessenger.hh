@@ -20,6 +20,7 @@ private:
     G4UIdirectory*               fAmBeDir;
     G4UIcmdWithADoubleAndUnit*   fDistanceCmd;
     G4UIcmdWithADouble*          fActivityCmd;
+    G4UIcmdWithADouble*          fGammaYieldCmd;
 };
 
 #endif

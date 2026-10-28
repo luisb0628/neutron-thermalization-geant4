@@ -1,14 +1,13 @@
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
+#include "SourceMode.hh"
 
 #include "G4SingleParticleSource.hh"
 #include "G4SPSEneDistribution.hh"
 #include "G4ParticleTable.hh"
 #include "G4Event.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4Gamma.hh"
 #include "G4PrimaryVertex.hh"
-#include "G4PrimaryParticle.hh"
 #include "G4AnalysisManager.hh"
 #include "Randomize.hh"
 
@@ -35,7 +34,15 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* detector)
     BuildSpectrum_n2nd(fGPS_n2nd);
     BuildCs137Source();
 
+    const char* modeStr = "Both";
+    switch (SourceModeConfig::GetMode()) {
+        case SourceMode::AmBeOnly:  modeStr = "AmBe (solo neutrones)"; break;
+        case SourceMode::Cs137Only: modeStr = "Cs137 (solo gamma 661.657 keV)"; break;
+        default:                    modeStr = "Both (AmBe + Cs137 en el mismo evento)"; break;
+    }
+
     G4cout << "\n====================================================\n"
+           << "  Modo de fuente: " << modeStr << "\n"
            << "  Fuente AmBe configurada (3 canales: nGND/n1st/n2nd)\n"
            << "  Fracciones    : nGND=" << fFrac_nGND*100. << "%  n1st=" << fFrac_n1st*100.
            << "%  n2nd=" << (1.-fFrac_nGND-fFrac_n1st)*100. << "%\n"
@@ -123,19 +130,29 @@ void PrimaryGeneratorAction::BuildCs137Source()
 // ------------------------------------------------------------
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
+    const SourceMode mode = SourceModeConfig::GetMode();
+
+    if (mode != SourceMode::Cs137Only) GenerateAmBePrimary(event);
+    if (mode != SourceMode::AmBeOnly)  GenerateCs137Primary(event);
+}
+
+// ------------------------------------------------------------
+void PrimaryGeneratorAction::GenerateAmBePrimary(G4Event* event)
+{
     // Posición real de la cápsula AmBe (misma fuente de verdad que la geometría)
     G4ThreeVector srcPos = fDetector->GetAmBePosition();
 
-    // Selección del canal según las fracciones medidas
+    // Selección del canal según las fracciones medidas. El gamma de 4.438 MeV
+    // coincidente con n1st ya no se emite (no se observa en el espectro
+    // experimental); el canal n1st solo aporta su espectro de energía propio
+    // para el neutrón, igual que nGND/n2nd.
     G4double r = G4UniformRand();
     G4SingleParticleSource* activeGPS = nullptr;
-    G4bool emitGamma = false;
 
     if (r < fFrac_nGND) {
         activeGPS = fGPS_nGND;
     } else if (r < fFrac_nGND + fFrac_n1st) {
         activeGPS = fGPS_n1st;
-        emitGamma = true;   // n1st siempre va acompañado del gamma de 4438 keV
     } else {
         activeGPS = fGPS_n2nd;
     }
@@ -143,35 +160,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     activeGPS->GetPosDist()->SetCentreCoords(srcPos);
     activeGPS->GeneratePrimaryVertex(event);
     RecordSourceSpectrum(event->GetPrimaryVertex(event->GetNumberOfPrimaryVertex() - 1));
-
-    if (emitGamma) EmitCoincidentGamma(event, srcPos);
-
-    // Fuente Cs-137, punto fijo separado de la AmBe (decae independiente,
-    // un gamma de 661.657 keV por evento junto con el canal de neutrones)
-    fGPS_Cs137->GetPosDist()->SetCentreCoords(fDetector->GetCs137Position());
-    fGPS_Cs137->GeneratePrimaryVertex(event);
-    RecordSourceSpectrum(event->GetPrimaryVertex(event->GetNumberOfPrimaryVertex() - 1));
 }
 
 // ------------------------------------------------------------
-void PrimaryGeneratorAction::EmitCoincidentGamma(G4Event* event, const G4ThreeVector& pos)
+void PrimaryGeneratorAction::GenerateCs137Primary(G4Event* event)
 {
-    // Emisión isotrópica, independiente de la dirección del neutrón.
-    // Ensanchamiento Doppler aproximado (Ito et al. reportan FWHM ~115-120 keV
-    // a 4438 keV, equivalente a sigma/E ~ 0.9%)
-    G4double cosTheta = 2.*G4UniformRand() - 1.;
-    G4double sinTheta = std::sqrt(1. - cosTheta*cosTheta);
-    G4double phi = CLHEP::twopi * G4UniformRand();
-    G4ThreeVector dir(sinTheta*std::cos(phi), sinTheta*std::sin(phi), cosTheta);
-
-    auto* vertex = new G4PrimaryVertex(pos, 0.);
-    auto* gamma  = new G4PrimaryParticle(G4Gamma::Gamma());
-    G4double E = G4RandGauss::shoot(4.438*MeV, 0.009*4.438*MeV);
-    gamma->SetMomentumDirection(dir);
-    gamma->SetKineticEnergy(E);
-    vertex->SetPrimary(gamma);
-    event->AddPrimaryVertex(vertex);
-    RecordSourceSpectrum(vertex);
+    // Fuente Cs-137, punto fijo separado de la AmBe: un gamma de 661.657 keV
+    // por evento.
+    fGPS_Cs137->GetPosDist()->SetCentreCoords(fDetector->GetCs137Position());
+    fGPS_Cs137->GeneratePrimaryVertex(event);
+    RecordSourceSpectrum(event->GetPrimaryVertex(event->GetNumberOfPrimaryVertex() - 1));
 }
 
 // ------------------------------------------------------------

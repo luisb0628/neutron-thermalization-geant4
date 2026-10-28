@@ -3,11 +3,19 @@
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
+#include "GeneratorMessenger.hh"
+#include "ModerationConfig.hh"
+#include "SteppingAction.hh"
 
 ActionInitialization::ActionInitialization(DetectorConstruction* detector)
- : fDetector(detector) {}
+ : fDetector(detector), fGeneratorMessenger(new GeneratorMessenger()),
+   fModerationMessenger(new ModerationMessenger()) {}
 
-ActionInitialization::~ActionInitialization() {}
+ActionInitialization::~ActionInitialization()
+{
+    delete fModerationMessenger;
+    delete fGeneratorMessenger;
+}
 
 void ActionInitialization::BuildForMaster() const
 {
@@ -20,4 +28,5 @@ void ActionInitialization::Build() const
     auto* runAction = new RunAction();
     SetUserAction(runAction);
     SetUserAction(new EventAction(runAction));
+    SetUserAction(new SteppingAction());
 }
